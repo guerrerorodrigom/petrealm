@@ -3,8 +3,38 @@
   <string name="pets_to_adopt">Pets to adopt</string>
   <string name="adopted_pets">Adopted pets</string>
   <string name="owners">Owners</string>
-  <!-- TODO: Remove or change this placeholder text -->
-  <string name="hello_blank_fragment">Hello blank fragment</string>
   <string name="add_pet_to_adopt">Add pet to adopt</string>
   <string name="add_owner">Add owner</string>
+
+  <string name="dog">Dog</string>
+  <string name="cat">Cat</string>
+  <string name="octopus">Octopus</string>
+  <string name="squirrel">Squirrel</string>
+  <string name="squid">Squid</string>
+  <string name="penguin">Penguin</string>
+  <string name="seal">Seal</string>
+  <string name="snake">Snake</string>
+  <string name="fish">Fish</string>
+  <string name="owl">Owl</string>
+  <string name="chameleon">Chameleon</string>
+  <string name="fox">Fox</string>
+  <string name="pig">Pig</string>
+  <string name="tiger">Tiger</string>
+  <string name="cow">Cow</string>
+  <string name="wolf">Wolf</string>
+  <string name="skunk">Skunk</string>
+  <string name="rat">Rat</string>
+  <string name="panda">Panda</string>
+  <string name="monkey">Monkey</string>
+  <string name="frog">Frog</string>
+  <string name="spider">Spider</string>
+  <string name="duck">Duck</string>
+  <string name="bug">Bug</string>
+  <string name="bear">Bear</string>
+  <string name="bird">Bird</string>
+
+  <plurals name="age">
+    <item quantity="one">%d year</item>
+    <item quantity="many">%d years</item>
+  </plurals>
 </resources>

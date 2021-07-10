@@ -32,42 +32,19 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.pets.ui
+package com.raywenderlich.android.petrealm.pets.repositories
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.raywenderlich.android.petrealm.databinding.FragmentPetsToAdoptBinding
-import com.raywenderlich.android.petrealm.pets.adapters.PetAdapter
-import dagger.android.support.AndroidSupportInjection
-import javax.inject.Inject
+import com.raywenderlich.android.petrealm.pets.data.Pet
 
-class PetsToAdoptFragment : Fragment() {
+interface PetsRepository {
 
-  private var binding: FragmentPetsToAdoptBinding? = null
-  @Inject
-  lateinit var petsAdapter : PetAdapter
+  suspend fun addPet(pet: Pet)
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidSupportInjection.inject(this)
-    super.onCreate(savedInstanceState)
-  }
+  suspend fun getPetsToAdopt(): List<Pet>
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-      savedInstanceState: Bundle?): View? {
-    binding = FragmentPetsToAdoptBinding.inflate(layoutInflater, container, false)
-    return binding?.root
-  }
+  suspend fun getAdoptedPets(): List<Pet>
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
+  suspend fun updatePet(pet: Pet)
 
-    binding?.apply {
-      petsToAdoptList.layoutManager = LinearLayoutManager(requireContext())
-      petsToAdoptList.adapter = petsAdapter
-    }
-  }
+  suspend fun deletePet(pet: Pet)
 }

@@ -32,42 +32,30 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.pets.ui
+package com.raywenderlich.android.petrealm
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.raywenderlich.android.petrealm.databinding.FragmentPetsToAdoptBinding
-import com.raywenderlich.android.petrealm.pets.adapters.PetAdapter
-import dagger.android.support.AndroidSupportInjection
+import android.app.Application
+import com.raywenderlich.android.petrealm.di.DaggerAppComponent
+import com.raywenderlich.android.petrealm.di.PetsModule
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
 import javax.inject.Inject
 
-class PetsToAdoptFragment : Fragment() {
+class PetApplication : Application(), HasAndroidInjector {
 
-  private var binding: FragmentPetsToAdoptBinding? = null
   @Inject
-  lateinit var petsAdapter : PetAdapter
+  lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidSupportInjection.inject(this)
-    super.onCreate(savedInstanceState)
+  override fun onCreate() {
+    super.onCreate()
+
+    DaggerAppComponent.builder()
+        .petsModule(PetsModule())
+        .build().run {
+          inject(this@PetApplication)
+        }
   }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-      savedInstanceState: Bundle?): View? {
-    binding = FragmentPetsToAdoptBinding.inflate(layoutInflater, container, false)
-    return binding?.root
-  }
-
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-
-    binding?.apply {
-      petsToAdoptList.layoutManager = LinearLayoutManager(requireContext())
-      petsToAdoptList.adapter = petsAdapter
-    }
-  }
+  override fun androidInjector(): AndroidInjector<Any> = androidInjector
 }

@@ -40,8 +40,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.raywenderlich.android.petrealm.R
+import dagger.android.support.AndroidSupportInjection
 
 class AdoptedPetsFragment : Fragment() {
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    AndroidSupportInjection.inject(this)
+    super.onCreate(savedInstanceState)
+  }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View? {

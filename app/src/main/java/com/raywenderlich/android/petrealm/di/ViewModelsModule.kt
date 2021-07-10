@@ -32,42 +32,31 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.pets.ui
+package com.raywenderlich.android.petrealm.di
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.raywenderlich.android.petrealm.databinding.FragmentPetsToAdoptBinding
-import com.raywenderlich.android.petrealm.pets.adapters.PetAdapter
-import dagger.android.support.AndroidSupportInjection
-import javax.inject.Inject
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.raywenderlich.android.petrealm.di.viewmodels.ViewModelFactory
+import com.raywenderlich.android.petrealm.di.viewmodels.ViewModelKey
+import com.raywenderlich.android.petrealm.pets.viewmodels.AdoptedPetsViewModel
+import com.raywenderlich.android.petrealm.pets.viewmodels.PetsToAdoptViewModel
+import dagger.Binds
+import dagger.Module
+import dagger.multibindings.IntoMap
 
-class PetsToAdoptFragment : Fragment() {
+@Module
+abstract class ViewModelsModule {
 
-  private var binding: FragmentPetsToAdoptBinding? = null
-  @Inject
-  lateinit var petsAdapter : PetAdapter
+  @Binds
+  @IntoMap
+  @ViewModelKey(AdoptedPetsViewModel::class)
+  abstract fun bindAdoptedPetsViewModel(adoptedPetsViewModel: AdoptedPetsViewModel): ViewModel
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidSupportInjection.inject(this)
-    super.onCreate(savedInstanceState)
-  }
+  @Binds
+  @IntoMap
+  @ViewModelKey(PetsToAdoptViewModel::class)
+  abstract fun bindPetsToAdoptViewModel(petsToAdoptViewModel: PetsToAdoptViewModel): ViewModel
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-      savedInstanceState: Bundle?): View? {
-    binding = FragmentPetsToAdoptBinding.inflate(layoutInflater, container, false)
-    return binding?.root
-  }
-
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-
-    binding?.apply {
-      petsToAdoptList.layoutManager = LinearLayoutManager(requireContext())
-      petsToAdoptList.adapter = petsAdapter
-    }
-  }
+  @Binds
+  abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 }

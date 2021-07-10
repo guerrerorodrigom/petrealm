@@ -32,42 +32,36 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.pets.ui
+package com.raywenderlich.android.petrealm.pets.data
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.raywenderlich.android.petrealm.databinding.FragmentPetsToAdoptBinding
-import com.raywenderlich.android.petrealm.pets.adapters.PetAdapter
-import dagger.android.support.AndroidSupportInjection
-import javax.inject.Inject
+import androidx.annotation.StringRes
+import com.raywenderlich.android.petrealm.R
 
-class PetsToAdoptFragment : Fragment() {
-
-  private var binding: FragmentPetsToAdoptBinding? = null
-  @Inject
-  lateinit var petsAdapter : PetAdapter
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidSupportInjection.inject(this)
-    super.onCreate(savedInstanceState)
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-      savedInstanceState: Bundle?): View? {
-    binding = FragmentPetsToAdoptBinding.inflate(layoutInflater, container, false)
-    return binding?.root
-  }
-
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-
-    binding?.apply {
-      petsToAdoptList.layoutManager = LinearLayoutManager(requireContext())
-      petsToAdoptList.adapter = petsAdapter
-    }
-  }
+enum class PetType(@StringRes val type: Int) {
+  DOG(R.string.dog),
+  CAT(R.string.cat),
+  OCTOPUS(R.string.octopus),
+  SQUIRREL(R.string.squirrel),
+  SQUID(R.string.squid),
+  PENGUIN(R.string.penguin),
+  SEAL(R.string.seal),
+  SNAKE(R.string.snake),
+  FISH(R.string.fish),
+  OWL(R.string.owl),
+  CHAMELEON(R.string.chameleon),
+  FOX(R.string.fox),
+  PIG(R.string.pig),
+  TIGER(R.string.tiger),
+  COW(R.string.cow),
+  WOLF(R.string.wolf),
+  SKUNK(R.string.skunk),
+  RAT(R.string.rat),
+  PANDA(R.string.panda),
+  MONKEY(R.string.monkey),
+  FROG(R.string.frog),
+  SPIDER(R.string.spider),
+  DUCK(R.string.duck),
+  BUG(R.string.bug),
+  BEAR(R.string.bear),
+  BIRD(R.string.bird)
 }

@@ -32,42 +32,42 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.pets.ui
+package com.raywenderlich.android.petrealm.pets.adapters
 
-import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.raywenderlich.android.petrealm.databinding.FragmentPetsToAdoptBinding
-import com.raywenderlich.android.petrealm.pets.adapters.PetAdapter
-import dagger.android.support.AndroidSupportInjection
+import androidx.recyclerview.widget.RecyclerView
+import com.raywenderlich.android.petrealm.R
+import com.raywenderlich.android.petrealm.databinding.ItemPetBinding
+import com.raywenderlich.android.petrealm.pets.data.Pet
+import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
-class PetsToAdoptFragment : Fragment() {
+class PetAdapter @Inject constructor() : RecyclerView.Adapter<PetAdapter.PetViewHolder>() {
 
-  private var binding: FragmentPetsToAdoptBinding? = null
-  @Inject
-  lateinit var petsAdapter : PetAdapter
+  private val pets = mutableListOf<Pet>()
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidSupportInjection.inject(this)
-    super.onCreate(savedInstanceState)
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetViewHolder {
+    val binding = ItemPetBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+    return PetViewHolder(binding)
   }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-      savedInstanceState: Bundle?): View? {
-    binding = FragmentPetsToAdoptBinding.inflate(layoutInflater, container, false)
-    return binding?.root
+  override fun onBindViewHolder(holder: PetViewHolder, position: Int) {
+    val pet = pets[position]
+    holder.bind(pet)
   }
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
+  override fun getItemCount() = pets.size
 
-    binding?.apply {
-      petsToAdoptList.layoutManager = LinearLayoutManager(requireContext())
-      petsToAdoptList.adapter = petsAdapter
+  class PetViewHolder(private val binding: ItemPetBinding) : RecyclerView.ViewHolder(binding.root) {
+
+    fun bind(pet: Pet) {
+      with(binding) {
+        Picasso.get().load(pet.image).into(imagePet)
+        textViewPetAge.text = root.context.resources.getQuantityString(R.plurals.age, pet.age)
+        textViewPetName.text = pet.name
+        textViewPetType.text = root.context.getString(pet.petType.type)
+      }
     }
   }
 }

@@ -32,42 +32,27 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.pets.ui
+package com.raywenderlich.android.petrealm.di
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.raywenderlich.android.petrealm.databinding.FragmentPetsToAdoptBinding
-import com.raywenderlich.android.petrealm.pets.adapters.PetAdapter
-import dagger.android.support.AndroidSupportInjection
-import javax.inject.Inject
+import com.raywenderlich.android.petrealm.MainActivity
+import com.raywenderlich.android.petrealm.owners.ui.OwnersFragment
+import com.raywenderlich.android.petrealm.pets.ui.AdoptedPetsFragment
+import com.raywenderlich.android.petrealm.pets.ui.PetsToAdoptFragment
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
 
-class PetsToAdoptFragment : Fragment() {
+@Module
+abstract class AndroidModule {
 
-  private var binding: FragmentPetsToAdoptBinding? = null
-  @Inject
-  lateinit var petsAdapter : PetAdapter
+  @ContributesAndroidInjector
+  abstract fun mainActivity(): MainActivity
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidSupportInjection.inject(this)
-    super.onCreate(savedInstanceState)
-  }
+  @ContributesAndroidInjector
+  abstract fun petsToAdoptFragment(): PetsToAdoptFragment
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-      savedInstanceState: Bundle?): View? {
-    binding = FragmentPetsToAdoptBinding.inflate(layoutInflater, container, false)
-    return binding?.root
-  }
+  @ContributesAndroidInjector
+  abstract fun adoptedPetsFragment(): AdoptedPetsFragment
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-
-    binding?.apply {
-      petsToAdoptList.layoutManager = LinearLayoutManager(requireContext())
-      petsToAdoptList.adapter = petsAdapter
-    }
-  }
+  @ContributesAndroidInjector
+  abstract fun ownersFragment(): OwnersFragment
 }

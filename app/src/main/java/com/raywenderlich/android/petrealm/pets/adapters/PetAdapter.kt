@@ -39,7 +39,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.petrealm.R
 import com.raywenderlich.android.petrealm.databinding.ItemPetBinding
-import com.raywenderlich.android.petrealm.pets.data.Pet
+import com.raywenderlich.android.petrealm.pets.models.Pet
 import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
@@ -59,14 +59,23 @@ class PetAdapter @Inject constructor() : RecyclerView.Adapter<PetAdapter.PetView
 
   override fun getItemCount() = pets.size
 
+  fun addItems(petsToAdopt: List<Pet>) {
+    pets.clear()
+    pets.addAll(petsToAdopt)
+    notifyDataSetChanged()
+  }
+
   class PetViewHolder(private val binding: ItemPetBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(pet: Pet) {
       with(binding) {
-        Picasso.get().load(pet.image).into(imagePet)
-        textViewPetAge.text = root.context.resources.getQuantityString(R.plurals.age, pet.age)
+        pet.image?.let {
+          Picasso.get().load(it).into(imagePet)
+        }
+        textViewPetAge.text = root.context.getString(R.string.pet_age, pet.age, root.context
+            .resources.getQuantityString(R.plurals.age, pet.age))
         textViewPetName.text = pet.name
-        textViewPetType.text = root.context.getString(pet.petType.type)
+        textViewPetType.text = pet.petType
       }
     }
   }

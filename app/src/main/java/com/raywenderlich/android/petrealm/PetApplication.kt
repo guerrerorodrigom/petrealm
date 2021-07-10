@@ -34,15 +34,18 @@
 
 package com.raywenderlich.android.petrealm
 
-import android.app.Application
+import android.content.Context
+import androidx.multidex.MultiDex
+import androidx.multidex.MultiDexApplication
 import com.raywenderlich.android.petrealm.di.DaggerAppComponent
 import com.raywenderlich.android.petrealm.di.PetsModule
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
+import io.realm.Realm
 import javax.inject.Inject
 
-class PetApplication : Application(), HasAndroidInjector {
+class PetApplication : MultiDexApplication(), HasAndroidInjector {
 
   @Inject
   lateinit var androidInjector: DispatchingAndroidInjector<Any>
@@ -55,6 +58,13 @@ class PetApplication : Application(), HasAndroidInjector {
         .build().run {
           inject(this@PetApplication)
         }
+
+    Realm.init(this)
+  }
+
+  override fun attachBaseContext(base: Context) {
+    super.attachBaseContext(base)
+    MultiDex.install(this)
   }
 
   override fun androidInjector(): AndroidInjector<Any> = androidInjector

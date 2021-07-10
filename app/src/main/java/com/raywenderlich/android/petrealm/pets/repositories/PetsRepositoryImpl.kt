@@ -34,27 +34,57 @@
 
 package com.raywenderlich.android.petrealm.pets.repositories
 
-import com.raywenderlich.android.petrealm.pets.data.Pet
+import com.raywenderlich.android.petrealm.pets.data.PetRealm
+import com.raywenderlich.android.petrealm.pets.models.Pet
+import io.realm.Realm
+import io.realm.RealmConfiguration
+import io.realm.kotlin.executeTransactionAwait
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import javax.inject.Inject
 
-class PetsRepositoryImpl : PetsRepository {
+class PetsRepositoryImpl @Inject constructor(
+    private val config: RealmConfiguration,
+) : PetsRepository {
 
-  override suspend fun addPet(pet: Pet) {
-    TODO("Not yet implemented")
-  }
+  override suspend fun addPet(
+      name: String,
+      age: Int,
+      type: String,
+      image: Int?
+  ): Flow<Boolean> = flow {
+    emit(false)
+    val realm = Realm.getInstance(config)
+    realm.executeTransactionAwait {
+      val pet = PetRealm(name = name, age = age, petType = type, image = image)
+      it.insert(pet)
+    }
+    emit(true)
+  }.flowOn(Dispatchers.IO)
 
-  override suspend fun getPetsToAdopt(): List<Pet> {
-    TODO("Not yet implemented")
-  }
+  override suspend fun getPetsToAdopt(): Flow<List<Pet>> = flow {
+    val realm = Realm.getInstance(config)
+    val petsToAdopt = realm
+        .where(PetRealm::class.java)
+        .equalTo("isAdopted", false)
+        .findAll()
+        .map {
+          Pet(name = it.name, age = it.age, image = it.image, petType = it.petType)
+        }
+    emit(petsToAdopt)
+  }.flowOn(Dispatchers.IO)
 
   override suspend fun getAdoptedPets(): List<Pet> {
     TODO("Not yet implemented")
   }
 
-  override suspend fun updatePet(pet: Pet) {
+  override suspend fun updatePet(petRealm: PetRealm) {
     TODO("Not yet implemented")
   }
 
-  override suspend fun deletePet(pet: Pet) {
+  override suspend fun deletePet(petRealm: PetRealm) {
     TODO("Not yet implemented")
   }
 }

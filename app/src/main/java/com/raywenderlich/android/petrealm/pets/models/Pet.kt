@@ -32,36 +32,11 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.pets.data
+package com.raywenderlich.android.petrealm.pets.models
 
-import androidx.annotation.StringRes
-import com.raywenderlich.android.petrealm.R
-
-enum class PetType(@StringRes val type: Int) {
-  DOG(R.string.dog),
-  CAT(R.string.cat),
-  OCTOPUS(R.string.octopus),
-  SQUIRREL(R.string.squirrel),
-  SQUID(R.string.squid),
-  PENGUIN(R.string.penguin),
-  SEAL(R.string.seal),
-  SNAKE(R.string.snake),
-  FISH(R.string.fish),
-  OWL(R.string.owl),
-  CHAMELEON(R.string.chameleon),
-  FOX(R.string.fox),
-  PIG(R.string.pig),
-  TIGER(R.string.tiger),
-  COW(R.string.cow),
-  WOLF(R.string.wolf),
-  SKUNK(R.string.skunk),
-  RAT(R.string.rat),
-  PANDA(R.string.panda),
-  MONKEY(R.string.monkey),
-  FROG(R.string.frog),
-  SPIDER(R.string.spider),
-  DUCK(R.string.duck),
-  BUG(R.string.bug),
-  BEAR(R.string.bear),
-  BIRD(R.string.bird)
-}
+data class Pet(
+  val name: String,
+  val age: Int,
+  val petType: String = "",
+  val image: Int? = null,
+)

@@ -38,27 +38,41 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.raywenderlich.android.petrealm.pets.data.PetRealm
 import com.raywenderlich.android.petrealm.pets.models.Pet
 import com.raywenderlich.android.petrealm.pets.repositories.PetsRepository
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class PetsToAdoptViewModel @Inject constructor(
-    private val petsRepository: PetsRepository
+class AddPetViewModel @Inject constructor(
+  private val petsRepository: PetsRepository
 ) : ViewModel() {
 
-  private val _petsToAdopt = MutableLiveData<List<Pet>>(emptyList())
-  val petsToAdopt: LiveData<List<Pet>>
+  private val _addPetCompleted = MutableLiveData(false)
+  val addPetCompleted: LiveData<Boolean>
     get() {
-      return _petsToAdopt
+      return _addPetCompleted
     }
+  private var petType: String = ""
+  private var selectedImage: Int? = null
 
-  fun getPetsToAdopt() {
+  fun isValid(name: String, age: String) =
+      name.isNotEmpty() && petType.isNotEmpty() && age.isNotEmpty() && age.toIntOrNull() != null
+
+  fun setPetType(petType: String) {
+    this.petType = petType
+  }
+
+  fun addPet(name: String, age: String) {
     viewModelScope.launch {
-      petsRepository.getPetsToAdopt().collect {
-        _petsToAdopt.value = it
+      petsRepository.addPet(name, age.toIntOrNull() ?: 0, petType, selectedImage).collect { done ->
+        _addPetCompleted.value = done
       }
     }
+  }
+
+  fun setSelectedImage(selectedImage: Int) {
+    this.selectedImage = selectedImage
   }
 }

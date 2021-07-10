@@ -38,8 +38,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.raywenderlich.android.petrealm.di.viewmodels.ViewModelFactory
 import com.raywenderlich.android.petrealm.di.viewmodels.ViewModelKey
+import com.raywenderlich.android.petrealm.pets.viewmodels.AddPetViewModel
 import com.raywenderlich.android.petrealm.pets.viewmodels.AdoptedPetsViewModel
 import com.raywenderlich.android.petrealm.pets.viewmodels.PetsToAdoptViewModel
+import com.raywenderlich.android.petrealm.pets.viewmodels.SharedViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -56,6 +58,16 @@ abstract class ViewModelsModule {
   @IntoMap
   @ViewModelKey(PetsToAdoptViewModel::class)
   abstract fun bindPetsToAdoptViewModel(petsToAdoptViewModel: PetsToAdoptViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelKey(AddPetViewModel::class)
+  abstract fun bindAddPetViewModel(addPetViewModel: AddPetViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelKey(SharedViewModel::class)
+  abstract fun bindSharedViewModel(sharedViewModel: SharedViewModel): ViewModel
 
   @Binds
   abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

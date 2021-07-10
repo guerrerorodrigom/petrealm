@@ -35,12 +35,20 @@
 package com.raywenderlich.android.petrealm.pets.data
 
 import androidx.annotation.DrawableRes
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
+import io.realm.annotations.Required
+import org.bson.types.ObjectId
 
-data class Pet(
-  val name: String,
-  val age: Int,
-  val petType: PetType,
+open class PetRealm(
+  @PrimaryKey
+  var id: ObjectId = ObjectId(),
+  @Required
+  var name: String = "",
+  var age: Int = 0,
+  @Required
+  var petType: String = "",
   @DrawableRes
-  val image: Int,
-  val isAdopted: Boolean
-)
+  var image: Int? = null,
+  var isAdopted: Boolean = false
+): RealmObject()

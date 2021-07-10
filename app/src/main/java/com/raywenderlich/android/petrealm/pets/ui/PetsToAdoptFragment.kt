@@ -39,17 +39,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.raywenderlich.android.petrealm.R
 import com.raywenderlich.android.petrealm.databinding.FragmentPetsToAdoptBinding
 import com.raywenderlich.android.petrealm.pets.adapters.PetAdapter
+import com.raywenderlich.android.petrealm.pets.viewmodels.PetsToAdoptViewModel
+import com.raywenderlich.android.petrealm.pets.viewmodels.SharedViewModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class PetsToAdoptFragment : Fragment() {
 
   private var binding: FragmentPetsToAdoptBinding? = null
+
   @Inject
-  lateinit var petsAdapter : PetAdapter
+  lateinit var petsAdapter: PetAdapter
+
+  @Inject
+  lateinit var viewModelFactory: ViewModelProvider.Factory
+
+  private val viewModel: PetsToAdoptViewModel by viewModels { viewModelFactory }
+  private val sharedViewModel: SharedViewModel by activityViewModels { viewModelFactory }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     AndroidSupportInjection.inject(this)
@@ -68,6 +82,26 @@ class PetsToAdoptFragment : Fragment() {
     binding?.apply {
       petsToAdoptList.layoutManager = LinearLayoutManager(requireContext())
       petsToAdoptList.adapter = petsAdapter
+
+      buttonAddPet.setOnClickListener {
+        findNavController().navigate(R.id.action_add_pet)
+      }
     }
+
+    viewModel.petsToAdopt.observe(viewLifecycleOwner) {
+      petsAdapter.addItems(it)
+    }
+
+    sharedViewModel.reload.observe(viewLifecycleOwner) { reload ->
+      if (reload) {
+        viewModel.getPetsToAdopt()
+      }
+    }
+  }
+
+  override fun onResume() {
+    super.onResume()
+
+    viewModel.getPetsToAdopt()
   }
 }

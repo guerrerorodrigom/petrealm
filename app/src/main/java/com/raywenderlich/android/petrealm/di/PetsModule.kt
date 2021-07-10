@@ -34,8 +34,22 @@
 
 package com.raywenderlich.android.petrealm.di
 
+import com.raywenderlich.android.petrealm.pets.repositories.PetsRepository
+import com.raywenderlich.android.petrealm.pets.repositories.PetsRepositoryImpl
 import dagger.Module
+import dagger.Provides
+import io.realm.RealmConfiguration
+import javax.inject.Singleton
 
 @Module
 class PetsModule {
+
+  @Singleton
+  @Provides
+  fun providesRealmConfig(): RealmConfiguration = RealmConfiguration.Builder().build()
+
+  @Singleton
+  @Provides
+  fun providesPetsRepository(configuration: RealmConfiguration): PetsRepository =
+      PetsRepositoryImpl(configuration)
 }

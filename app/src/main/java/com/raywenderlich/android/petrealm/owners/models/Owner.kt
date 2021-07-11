@@ -35,11 +35,13 @@
 package com.raywenderlich.android.petrealm.owners.models
 
 import androidx.annotation.DrawableRes
+import com.raywenderlich.android.petrealm.pets.models.Pet
 
 data class Owner(
   val id: String,
   val name: String,
   @DrawableRes
   val image: Int? = null,
-  val numberOfPets: Int = 0
+  val numberOfPets: Long = 0,
+  val pets: List<Pet> = emptyList()
 )

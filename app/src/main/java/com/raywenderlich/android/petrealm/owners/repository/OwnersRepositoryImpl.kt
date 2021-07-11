@@ -35,6 +35,7 @@
 package com.raywenderlich.android.petrealm.owners.repository
 
 import com.raywenderlich.android.petrealm.owners.models.Owner
+import com.raywenderlich.android.petrealm.pets.models.Pet
 import com.raywenderlich.android.petrealm.realm.OwnerRealm
 import com.raywenderlich.android.petrealm.realm.PetRealm
 import io.realm.Realm
@@ -67,8 +68,22 @@ class OwnersRepositoryImpl @Inject constructor(
         .where(OwnerRealm::class.java)
         .findAll()
         .sort("name", Sort.ASCENDING)
-        .map {
-          Owner(name = it.name, image = it.image, id = it.id)
+        .map { owner ->
+          val pets = owner.pets.map { pet ->
+            Pet(
+                id = pet.id,
+                name = pet.name,
+                age = pet.age,
+                petType = pet.petType,
+                image = pet.image,
+                isAdopted = pet.isAdopted
+            )
+          }
+          val petCount = realm.
+          where(PetRealm::class.java)
+              .equalTo("owner.id", owner.id)
+              .count()
+          Owner(name = owner.name, image = owner.image, id = owner.id, pets = pets, numberOfPets = petCount)
         }
     emit(owners)
   }.flowOn(Dispatchers.IO)

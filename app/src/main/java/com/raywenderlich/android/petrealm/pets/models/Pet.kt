@@ -40,5 +40,6 @@ data class Pet(
   val age: Int,
   val petType: String = "",
   val image: Int? = null,
-  val isAdopted: Boolean = false
+  val isAdopted: Boolean = false,
+  val ownerName: String? = null
 )

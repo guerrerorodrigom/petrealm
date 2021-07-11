@@ -36,6 +36,8 @@ package com.raywenderlich.android.petrealm.realm
 
 import androidx.annotation.DrawableRes
 import io.realm.RealmObject
+import io.realm.RealmResults
+import io.realm.annotations.LinkingObjects
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.Required
 import org.bson.types.ObjectId
@@ -50,6 +52,6 @@ open class PetRealm(
   var petType: String = "",
   @DrawableRes
   var image: Int? = null,
-  var isAdopted: Boolean = false,
-  var owner: OwnerRealm? = null
+  @LinkingObjects("pets")
+  val owner: RealmResults<OwnerRealm>? = null
 ): RealmObject()

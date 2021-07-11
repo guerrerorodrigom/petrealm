@@ -76,7 +76,7 @@ class OwnersRepositoryImpl @Inject constructor(
                 age = pet.age,
                 petType = pet.petType,
                 image = pet.image,
-                isAdopted = pet.isAdopted
+                isAdopted = true
             )
           }
           val petCount = realm.
@@ -101,9 +101,6 @@ class OwnersRepositoryImpl @Inject constructor(
           .where(OwnerRealm::class.java)
           .equalTo("id", ownerId)
           .findFirst()
-
-      pet?.isAdopted = true
-      pet?.owner = owner
 
       owner?.pets?.add(pet)
     }

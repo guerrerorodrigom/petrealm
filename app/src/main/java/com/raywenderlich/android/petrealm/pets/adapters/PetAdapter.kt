@@ -79,10 +79,10 @@ class PetAdapter @Inject constructor() : RecyclerView.Adapter<PetAdapter.PetView
             .resources.getQuantityString(R.plurals.age, pet.age))
         textViewPetName.text = pet.name
         textViewPetType.text = pet.petType
-        textViewPetOwner.isVisible = pet.isAdopted.not()
+        textViewPetOwner.isVisible = pet.isAdopted
         buttonAdopt.isVisible = pet.isAdopted.not()
         pet.ownerName?.let { owner ->
-          textViewPetOwner.text = owner
+          textViewPetOwner.text = root.context.getString(R.string.owned_by, owner)
         }
         buttonAdopt.setOnClickListener {
           val navController = Navigation.findNavController(binding.root)

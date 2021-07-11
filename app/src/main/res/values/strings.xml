@@ -41,6 +41,7 @@
   <string name="select_the_type_of_pet">Select the type of pet:</string>
   <string name="name_error">Name cannot be empty</string>
   <string name="age_error">Age cannot be empty</string>
+  <string name="owned_by">Owner: %s</string>
 
   <plurals name="age">
     <item quantity="one">year</item>

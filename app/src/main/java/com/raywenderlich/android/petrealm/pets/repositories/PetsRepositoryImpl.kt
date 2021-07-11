@@ -69,7 +69,7 @@ class PetsRepositoryImpl @Inject constructor(
     val realm = Realm.getInstance(config)
     val petsToAdopt = realm
         .where(PetRealm::class.java)
-        .equalTo("isAdopted", false)
+        .isEmpty("owner")
         .findAll()
         .map {
           Pet(
@@ -77,7 +77,7 @@ class PetsRepositoryImpl @Inject constructor(
               age = it.age,
               image = it.image,
               petType = it.petType,
-              isAdopted = it.isAdopted,
+              isAdopted = false,
               id = it.id
           )
         }
@@ -88,17 +88,19 @@ class PetsRepositoryImpl @Inject constructor(
     val realm = Realm.getInstance(config)
     val petsToAdopt = realm
         .where(PetRealm::class.java)
-        .equalTo("isAdopted", true)
+        .isNotEmpty("owner")
         .findAll()
         .sort("name", Sort.ASCENDING)
         .map {
+          val name = it.owner?.get(0)?.name
           Pet(
               name = it.name,
               age = it.age,
               image = it.image,
               petType = it.petType,
               id = it.id,
-              isAdopted = it.isAdopted
+              isAdopted = true,
+              ownerName = name
           )
         }
     emit(petsToAdopt)

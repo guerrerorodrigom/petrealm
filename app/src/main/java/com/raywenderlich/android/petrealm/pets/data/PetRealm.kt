@@ -35,6 +35,7 @@
 package com.raywenderlich.android.petrealm.pets.data
 
 import androidx.annotation.DrawableRes
+import com.raywenderlich.android.petrealm.owners.data.OwnerRealm
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.Required
@@ -50,5 +51,6 @@ open class PetRealm(
   var petType: String = "",
   @DrawableRes
   var image: Int? = null,
-  var isAdopted: Boolean = false
+  var isAdopted: Boolean = false,
+  var owner: OwnerRealm? = null
 ): RealmObject()

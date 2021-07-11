@@ -35,6 +35,7 @@
 package com.raywenderlich.android.petrealm.di
 
 import com.raywenderlich.android.petrealm.MainActivity
+import com.raywenderlich.android.petrealm.owners.ui.AddOwnerFragment
 import com.raywenderlich.android.petrealm.owners.ui.OwnersFragment
 import com.raywenderlich.android.petrealm.pets.ui.AddPetFragment
 import com.raywenderlich.android.petrealm.pets.ui.AdoptedPetsFragment
@@ -59,4 +60,7 @@ abstract class AndroidModule {
 
   @ContributesAndroidInjector
   abstract fun addPetFragment(): AddPetFragment
+
+  @ContributesAndroidInjector
+  abstract fun addOwnerFragment(): AddOwnerFragment
 }

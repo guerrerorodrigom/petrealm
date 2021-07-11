@@ -32,55 +32,21 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.di
+package com.raywenderlich.android.petrealm.owners.utils
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.raywenderlich.android.petrealm.di.viewmodels.ViewModelFactory
-import com.raywenderlich.android.petrealm.di.viewmodels.ViewModelKey
-import com.raywenderlich.android.petrealm.owners.viewmodels.OwnersViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.AddPetViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.AdoptedPetsViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.PetsToAdoptViewModel
-import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
-import com.raywenderlich.android.petrealm.owners.viewmodels.AddOwnerViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.multibindings.IntoMap
+import com.raywenderlich.android.petrealm.R
 
-@Module
-abstract class ViewModelsModule {
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(AdoptedPetsViewModel::class)
-  abstract fun bindAdoptedPetsViewModel(adoptedPetsViewModel: AdoptedPetsViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(PetsToAdoptViewModel::class)
-  abstract fun bindPetsToAdoptViewModel(petsToAdoptViewModel: PetsToAdoptViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(AddPetViewModel::class)
-  abstract fun bindAddPetViewModel(addPetViewModel: AddPetViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(SharedViewModel::class)
-  abstract fun bindSharedViewModel(sharedViewModel: SharedViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(OwnersViewModel::class)
-  abstract fun bindOwnersViewModel(ownersViewModel: OwnersViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(AddOwnerViewModel::class)
-  abstract fun bindAddOwnerViewModel(addOwnerViewModel: AddOwnerViewModel): ViewModel
-
-  @Binds
-  abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
+fun getOwnersImages(): List<Int> {
+  val images = mutableListOf<Int>()
+  images.add(R.drawable.owner01)
+  images.add(R.drawable.owner02)
+  images.add(R.drawable.owner03)
+  images.add(R.drawable.owner04)
+  images.add(R.drawable.owner05)
+  images.add(R.drawable.owner06)
+  images.add(R.drawable.owner07)
+  images.add(R.drawable.owner08)
+  images.add(R.drawable.owner09)
+  images.add(R.drawable.owner10)
+  return images
 }

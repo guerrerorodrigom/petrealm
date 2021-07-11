@@ -32,55 +32,43 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.di
+package com.raywenderlich.android.petrealm.owners.repository
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.raywenderlich.android.petrealm.di.viewmodels.ViewModelFactory
-import com.raywenderlich.android.petrealm.di.viewmodels.ViewModelKey
-import com.raywenderlich.android.petrealm.owners.viewmodels.OwnersViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.AddPetViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.AdoptedPetsViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.PetsToAdoptViewModel
-import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
-import com.raywenderlich.android.petrealm.owners.viewmodels.AddOwnerViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.multibindings.IntoMap
+import com.raywenderlich.android.petrealm.owners.data.OwnerRealm
+import com.raywenderlich.android.petrealm.owners.models.Owner
+import io.realm.Realm
+import io.realm.RealmConfiguration
+import io.realm.Sort
+import io.realm.kotlin.executeTransactionAwait
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import javax.inject.Inject
 
-@Module
-abstract class ViewModelsModule {
+class OwnersRepositoryImpl @Inject constructor(
+    private val configuration: RealmConfiguration
+) : OwnersRepository {
 
-  @Binds
-  @IntoMap
-  @ViewModelKey(AdoptedPetsViewModel::class)
-  abstract fun bindAdoptedPetsViewModel(adoptedPetsViewModel: AdoptedPetsViewModel): ViewModel
+  override fun addOwner(name: String, image: Int?): Flow<Boolean> = flow {
+    emit(false)
+    val realm = Realm.getInstance(configuration)
+    realm.executeTransactionAwait {
+      val owner = OwnerRealm(name = name, image = image)
+      it.insert(owner)
+    }
+    emit(true)
+  }.flowOn(Dispatchers.IO)
 
-  @Binds
-  @IntoMap
-  @ViewModelKey(PetsToAdoptViewModel::class)
-  abstract fun bindPetsToAdoptViewModel(petsToAdoptViewModel: PetsToAdoptViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(AddPetViewModel::class)
-  abstract fun bindAddPetViewModel(addPetViewModel: AddPetViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(SharedViewModel::class)
-  abstract fun bindSharedViewModel(sharedViewModel: SharedViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(OwnersViewModel::class)
-  abstract fun bindOwnersViewModel(ownersViewModel: OwnersViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(AddOwnerViewModel::class)
-  abstract fun bindAddOwnerViewModel(addOwnerViewModel: AddOwnerViewModel): ViewModel
-
-  @Binds
-  abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
+  override fun getOwners(): Flow<List<Owner>> = flow {
+    val realm = Realm.getInstance(configuration)
+    val owners = realm
+        .where(OwnerRealm::class.java)
+        .findAll()
+        .sort("name", Sort.ASCENDING)
+        .map {
+          Owner(name = it.name, image = it.image)
+        }
+    emit(owners)
+  }
 }

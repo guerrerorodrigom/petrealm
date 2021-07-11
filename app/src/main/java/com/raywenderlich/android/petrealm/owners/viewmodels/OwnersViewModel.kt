@@ -32,55 +32,33 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.di
+package com.raywenderlich.android.petrealm.owners.viewmodels
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.raywenderlich.android.petrealm.di.viewmodels.ViewModelFactory
-import com.raywenderlich.android.petrealm.di.viewmodels.ViewModelKey
-import com.raywenderlich.android.petrealm.owners.viewmodels.OwnersViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.AddPetViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.AdoptedPetsViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.PetsToAdoptViewModel
-import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
-import com.raywenderlich.android.petrealm.owners.viewmodels.AddOwnerViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.multibindings.IntoMap
+import androidx.lifecycle.viewModelScope
+import com.raywenderlich.android.petrealm.owners.models.Owner
+import com.raywenderlich.android.petrealm.owners.repository.OwnersRepository
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-@Module
-abstract class ViewModelsModule {
+class OwnersViewModel @Inject constructor(
+    private val ownersRepository: OwnersRepository
+) : ViewModel() {
 
-  @Binds
-  @IntoMap
-  @ViewModelKey(AdoptedPetsViewModel::class)
-  abstract fun bindAdoptedPetsViewModel(adoptedPetsViewModel: AdoptedPetsViewModel): ViewModel
+  private val _owners = MutableLiveData(emptyList<Owner>())
+  val owners: LiveData<List<Owner>>
+    get() {
+      return _owners
+    }
 
-  @Binds
-  @IntoMap
-  @ViewModelKey(PetsToAdoptViewModel::class)
-  abstract fun bindPetsToAdoptViewModel(petsToAdoptViewModel: PetsToAdoptViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(AddPetViewModel::class)
-  abstract fun bindAddPetViewModel(addPetViewModel: AddPetViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(SharedViewModel::class)
-  abstract fun bindSharedViewModel(sharedViewModel: SharedViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(OwnersViewModel::class)
-  abstract fun bindOwnersViewModel(ownersViewModel: OwnersViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(AddOwnerViewModel::class)
-  abstract fun bindAddOwnerViewModel(addOwnerViewModel: AddOwnerViewModel): ViewModel
-
-  @Binds
-  abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
+  fun getOwners() {
+    viewModelScope.launch {
+      ownersRepository.getOwners().collect {
+        _owners.value = it
+      }
+    }
+  }
 }

@@ -48,19 +48,19 @@ import com.raywenderlich.android.petrealm.R
 import com.raywenderlich.android.petrealm.databinding.FragmentPetsToAdoptBinding
 import com.raywenderlich.android.petrealm.pets.adapters.PetAdapter
 import com.raywenderlich.android.petrealm.pets.viewmodels.PetsToAdoptViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.SharedViewModel
+import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class PetsToAdoptFragment : Fragment() {
-
-  private var binding: FragmentPetsToAdoptBinding? = null
 
   @Inject
   lateinit var petsAdapter: PetAdapter
 
   @Inject
   lateinit var viewModelFactory: ViewModelProvider.Factory
+
+  private var binding: FragmentPetsToAdoptBinding? = null
 
   private val viewModel: PetsToAdoptViewModel by viewModels { viewModelFactory }
   private val sharedViewModel: SharedViewModel by activityViewModels { viewModelFactory }

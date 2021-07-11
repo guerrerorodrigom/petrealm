@@ -38,69 +38,87 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.raywenderlich.android.petrealm.R
-import com.raywenderlich.android.petrealm.databinding.FragmentOwnersBinding
-import com.raywenderlich.android.petrealm.owners.adapters.OwnerAdapter
-import com.raywenderlich.android.petrealm.owners.viewmodels.OwnersViewModel
+import com.raywenderlich.android.petrealm.common.adapters.ImageAdapter
+import com.raywenderlich.android.petrealm.common.utils.addTracker
 import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
+import com.raywenderlich.android.petrealm.databinding.FragmentAddOwnerBinding
+import com.raywenderlich.android.petrealm.owners.utils.getOwnersImages
+import com.raywenderlich.android.petrealm.owners.viewmodels.AddOwnerViewModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-class OwnersFragment : Fragment() {
+class AddOwnerFragment : BottomSheetDialogFragment() {
 
   @Inject
-  lateinit var ownersAdapter: OwnerAdapter
+  lateinit var imagesAdapter: ImageAdapter
 
   @Inject
   lateinit var viewModelFactory: ViewModelProvider.Factory
 
-  private var binding: FragmentOwnersBinding? = null
-
-  private val viewModel: OwnersViewModel by viewModels { viewModelFactory }
+  private val viewModel: AddOwnerViewModel by viewModels { viewModelFactory }
   private val sharedViewModel: SharedViewModel by activityViewModels { viewModelFactory }
+  private var binding: FragmentAddOwnerBinding? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     AndroidSupportInjection.inject(this)
     super.onCreate(savedInstanceState)
   }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-    binding = FragmentOwnersBinding.inflate(inflater, container, false)
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+      savedInstanceState: Bundle?): View? {
+    binding = FragmentAddOwnerBinding.inflate(layoutInflater, container, false)
     return binding?.root
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+    setupRecyclerView()
+    setupSelectionTracker()
+    setupButton()
 
-    binding?.apply {
-      ownersList.layoutManager = LinearLayoutManager(requireContext())
-      ownersList.adapter = ownersAdapter
-
-      buttonAddOwner.setOnClickListener {
-        findNavController().navigate(R.id.action_add_owner)
-      }
-    }
-
-    viewModel.owners.observe(viewLifecycleOwner) {
-      ownersAdapter.addItems(it)
-    }
-
-    sharedViewModel.reload.observe(viewLifecycleOwner) { reload ->
-      if (reload) {
-        viewModel.getOwners()
+    viewModel.addOwnerCompleted.observe(viewLifecycleOwner) { completed ->
+      if (completed) {
+        sharedViewModel.reload()
+        dismiss()
       }
     }
   }
 
-  override fun onResume() {
-    super.onResume()
+  private fun setupRecyclerView() {
+    binding?.apply {
+      with(ownerImages) {
+        layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        imagesAdapter.addImages(getOwnersImages())
+        adapter = imagesAdapter
+      }
+    }
+  }
 
-    viewModel.getOwners()
+  private fun setupSelectionTracker() {
+    binding?.apply {
+      imagesAdapter.addTracker(ownerImages) { selectedImage ->
+        viewModel.setSelectedImage(selectedImage)
+      }
+    }
+  }
+
+  private fun setupButton() {
+    binding?.apply {
+      buttonCreate.setOnClickListener {
+        textInputLayoutName.error = ""
+
+        if (viewModel.isValid(editTextName.text.toString())) {
+          viewModel.addOwner(editTextName.text.toString())
+        } else {
+          textInputLayoutName.error = getString(R.string.name_error)
+        }
+      }
+    }
   }
 }

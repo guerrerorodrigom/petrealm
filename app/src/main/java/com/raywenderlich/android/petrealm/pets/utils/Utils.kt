@@ -32,55 +32,37 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.di
+package com.raywenderlich.android.petrealm.pets.utils
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.raywenderlich.android.petrealm.di.viewmodels.ViewModelFactory
-import com.raywenderlich.android.petrealm.di.viewmodels.ViewModelKey
-import com.raywenderlich.android.petrealm.owners.viewmodels.OwnersViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.AddPetViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.AdoptedPetsViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.PetsToAdoptViewModel
-import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
-import com.raywenderlich.android.petrealm.owners.viewmodels.AddOwnerViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.multibindings.IntoMap
+import com.raywenderlich.android.petrealm.R
 
-@Module
-abstract class ViewModelsModule {
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(AdoptedPetsViewModel::class)
-  abstract fun bindAdoptedPetsViewModel(adoptedPetsViewModel: AdoptedPetsViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(PetsToAdoptViewModel::class)
-  abstract fun bindPetsToAdoptViewModel(petsToAdoptViewModel: PetsToAdoptViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(AddPetViewModel::class)
-  abstract fun bindAddPetViewModel(addPetViewModel: AddPetViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(SharedViewModel::class)
-  abstract fun bindSharedViewModel(sharedViewModel: SharedViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(OwnersViewModel::class)
-  abstract fun bindOwnersViewModel(ownersViewModel: OwnersViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(AddOwnerViewModel::class)
-  abstract fun bindAddOwnerViewModel(addOwnerViewModel: AddOwnerViewModel): ViewModel
-
-  @Binds
-  abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
+fun getPetImages(): List<Int> {
+    val images = mutableListOf<Int>()
+    images.add(R.drawable.bear)
+    images.add(R.drawable.bird)
+    images.add(R.drawable.bug)
+    images.add(R.drawable.cat01)
+    images.add(R.drawable.chameleon)
+    images.add(R.drawable.cow)
+    images.add(R.drawable.dog01)
+    images.add(R.drawable.duck)
+    images.add(R.drawable.flying_fish)
+    images.add(R.drawable.fox)
+    images.add(R.drawable.frog)
+    images.add(R.drawable.monkey)
+    images.add(R.drawable.octopus)
+    images.add(R.drawable.owl)
+    images.add(R.drawable.panda)
+    images.add(R.drawable.penguin)
+    images.add(R.drawable.pig)
+    images.add(R.drawable.rat)
+    images.add(R.drawable.seal)
+    images.add(R.drawable.skunk)
+    images.add(R.drawable.snake)
+    images.add(R.drawable.spider)
+    images.add(R.drawable.squid)
+    images.add(R.drawable.squirrel)
+    images.add(R.drawable.tiger)
+    images.add(R.drawable.wolf)
+    return images
 }

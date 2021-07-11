@@ -32,55 +32,34 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.di
+package com.raywenderlich.android.petrealm.common.utils
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.raywenderlich.android.petrealm.di.viewmodels.ViewModelFactory
-import com.raywenderlich.android.petrealm.di.viewmodels.ViewModelKey
-import com.raywenderlich.android.petrealm.owners.viewmodels.OwnersViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.AddPetViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.AdoptedPetsViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.PetsToAdoptViewModel
-import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
-import com.raywenderlich.android.petrealm.owners.viewmodels.AddOwnerViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.multibindings.IntoMap
+import androidx.recyclerview.selection.SelectionPredicates
+import androidx.recyclerview.selection.SelectionTracker
+import androidx.recyclerview.selection.StableIdKeyProvider
+import androidx.recyclerview.selection.StorageStrategy
+import androidx.recyclerview.widget.RecyclerView
+import com.raywenderlich.android.petrealm.common.adapters.ImageAdapter
+import com.raywenderlich.android.petrealm.common.adapters.ItemLookup
 
-@Module
-abstract class ViewModelsModule {
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(AdoptedPetsViewModel::class)
-  abstract fun bindAdoptedPetsViewModel(adoptedPetsViewModel: AdoptedPetsViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(PetsToAdoptViewModel::class)
-  abstract fun bindPetsToAdoptViewModel(petsToAdoptViewModel: PetsToAdoptViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(AddPetViewModel::class)
-  abstract fun bindAddPetViewModel(addPetViewModel: AddPetViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(SharedViewModel::class)
-  abstract fun bindSharedViewModel(sharedViewModel: SharedViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(OwnersViewModel::class)
-  abstract fun bindOwnersViewModel(ownersViewModel: OwnersViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(AddOwnerViewModel::class)
-  abstract fun bindAddOwnerViewModel(addOwnerViewModel: AddOwnerViewModel): ViewModel
-
-  @Binds
-  abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
+fun ImageAdapter.addTracker(
+    recyclerView: RecyclerView,
+    onImageSelected: (selectedImage: Int) -> Unit
+) {
+  val tracker = SelectionTracker.Builder(
+      "image-selection",
+      recyclerView,
+      StableIdKeyProvider(recyclerView),
+      ItemLookup(recyclerView),
+      StorageStrategy.createLongStorage()
+  ).withSelectionPredicate(SelectionPredicates.createSelectSingleAnything()).build()
+  setTracker(tracker)
+  tracker.addObserver(object : SelectionTracker.SelectionObserver<Long>() {
+    override fun onSelectionChanged() {
+      tracker.selection.map {
+        val selectedImage = getSelectedImage(it)
+        onImageSelected(selectedImage)
+      }
+    }
+  })
 }

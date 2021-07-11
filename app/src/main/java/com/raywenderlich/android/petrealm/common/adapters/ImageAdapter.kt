@@ -32,7 +32,7 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.pets.adapters
+package com.raywenderlich.android.petrealm.common.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -43,78 +43,51 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.petrealm.R
 import com.raywenderlich.android.petrealm.databinding.ItemImageBinding
-import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
-class PetImageAdapter @Inject constructor() :
-    RecyclerView.Adapter<PetImageAdapter.PetImageViewHolder>() {
+class ImageAdapter @Inject constructor() :
+    RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
-  private val petImages = mutableListOf<Int>()
+  private val images = mutableListOf<Int>()
   private var tracker: SelectionTracker<Long>? = null
 
   init {
-    initImages()
     setHasStableIds(true)
   }
 
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetImageViewHolder {
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
     val binding = ItemImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-    return PetImageViewHolder(binding)
+    return ImageViewHolder(binding)
   }
 
-  override fun onBindViewHolder(holder: PetImageViewHolder, position: Int) {
-    val image = petImages[position]
+  override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
+    val image = images[position]
     holder.bind(image, tracker?.isSelected(position.toLong()) ?: false)
   }
 
-  override fun getItemCount() = petImages.size
+  override fun getItemCount() = images.size
 
   override fun getItemId(position: Int) = position.toLong()
+
+  fun addImages(images: List<Int>) {
+    this.images.addAll(images)
+  }
 
   fun setTracker(tracker: SelectionTracker<Long>) {
     this.tracker = tracker
   }
 
-  private fun initImages() {
-    petImages.add(R.drawable.bear)
-    petImages.add(R.drawable.bird)
-    petImages.add(R.drawable.bug)
-    petImages.add(R.drawable.cat01)
-    petImages.add(R.drawable.chameleon)
-    petImages.add(R.drawable.cow)
-    petImages.add(R.drawable.dog01)
-    petImages.add(R.drawable.duck)
-    petImages.add(R.drawable.flying_fish)
-    petImages.add(R.drawable.fox)
-    petImages.add(R.drawable.frog)
-    petImages.add(R.drawable.monkey)
-    petImages.add(R.drawable.octopus)
-    petImages.add(R.drawable.owl)
-    petImages.add(R.drawable.panda)
-    petImages.add(R.drawable.penguin)
-    petImages.add(R.drawable.pig)
-    petImages.add(R.drawable.rat)
-    petImages.add(R.drawable.seal)
-    petImages.add(R.drawable.skunk)
-    petImages.add(R.drawable.snake)
-    petImages.add(R.drawable.spider)
-    petImages.add(R.drawable.squid)
-    petImages.add(R.drawable.squirrel)
-    petImages.add(R.drawable.tiger)
-    petImages.add(R.drawable.wolf)
-  }
-
   fun getSelectedImage(position: Long): Int {
-    return petImages[position.toInt()]
+    return images[position.toInt()]
   }
 
-  class PetImageViewHolder(private val binding: ItemImageBinding) :
+  class ImageViewHolder(private val binding: ItemImageBinding) :
       RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(@DrawableRes image: Int, isSelected: Boolean) {
+    fun bind(@DrawableRes imageRes: Int, isSelected: Boolean) {
       with(binding) {
-        petImage.setImageResource(image)
-        selectedPet.isVisible = isSelected
+        image.setImageResource(imageRes)
+        selectedImage.isVisible = isSelected
       }
     }
 

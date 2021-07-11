@@ -51,7 +51,11 @@
   <fragment
       android:id="@+id/owners"
       android:name="com.raywenderlich.android.petrealm.owners.ui.OwnersFragment"
-      tools:layout="@layout/fragment_owners" />
+      tools:layout="@layout/fragment_owners">
+    <action
+      android:id="@+id/action_add_owner"
+      app:destination="@id/add_owner" />
+  </fragment>
 
   <fragment
       android:id="@+id/pets_to_adopt"
@@ -61,5 +65,10 @@
         android:id="@+id/action_add_pet"
         app:destination="@id/add_pet" />
   </fragment>
+
+  <dialog
+    android:id="@+id/add_owner"
+    android:name="com.raywenderlich.android.petrealm.owners.ui.AddOwnerFragment"
+    tools:layout="@layout/fragment_add_owner" />
 
 </navigation>

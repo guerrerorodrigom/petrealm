@@ -40,30 +40,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.selection.SelectionPredicates
-import androidx.recyclerview.selection.SelectionTracker
-import androidx.recyclerview.selection.StableIdKeyProvider
-import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.raywenderlich.android.petrealm.R
 import com.raywenderlich.android.petrealm.databinding.FragmentAddPetBinding
-import com.raywenderlich.android.petrealm.pets.adapters.ItemLookup
-import com.raywenderlich.android.petrealm.pets.adapters.PetImageAdapter
+import com.raywenderlich.android.petrealm.common.adapters.ImageAdapter
+import com.raywenderlich.android.petrealm.common.utils.addTracker
+import com.raywenderlich.android.petrealm.pets.utils.getPetImages
 import com.raywenderlich.android.petrealm.pets.viewmodels.AddPetViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.PetsToAdoptViewModel
-import com.raywenderlich.android.petrealm.pets.viewmodels.SharedViewModel
+import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class AddPetFragment : BottomSheetDialogFragment() {
 
   @Inject
-  lateinit var imagesAdapter: PetImageAdapter
+  lateinit var imagesAdapter: ImageAdapter
   @Inject
   lateinit var viewModelFactory: ViewModelProvider.Factory
 
@@ -79,6 +74,11 @@ class AddPetFragment : BottomSheetDialogFragment() {
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View? {
     binding = FragmentAddPetBinding.inflate(layoutInflater, container, false)
+    return binding?.root
+  }
+
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
     setupSpinner()
     setupRecyclerView()
     setupSelectionTracker()
@@ -90,13 +90,13 @@ class AddPetFragment : BottomSheetDialogFragment() {
         dismiss()
       }
     }
-    return binding?.root
   }
 
   private fun setupRecyclerView() {
     binding?.apply {
       with(petImages) {
         layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        imagesAdapter.addImages(getPetImages())
         adapter = imagesAdapter
       }
     }
@@ -104,22 +104,9 @@ class AddPetFragment : BottomSheetDialogFragment() {
 
   private fun setupSelectionTracker() {
     binding?.apply {
-      val tracker = SelectionTracker.Builder(
-          "image-selection",
-          petImages,
-          StableIdKeyProvider(petImages),
-          ItemLookup(petImages),
-          StorageStrategy.createLongStorage()
-      ).withSelectionPredicate(SelectionPredicates.createSelectSingleAnything()).build()
-      imagesAdapter.setTracker(tracker)
-      tracker.addObserver(object : SelectionTracker.SelectionObserver<Long>() {
-        override fun onSelectionChanged() {
-            tracker.selection.map {
-              val selectedImage = imagesAdapter.getSelectedImage(it)
-              viewModel.setSelectedImage(selectedImage)
-            }
-        }
-      })
+      imagesAdapter.addTracker(petImages) { selectedImage ->
+        viewModel.setSelectedImage(selectedImage)
+      }
     }
   }
 

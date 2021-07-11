@@ -32,50 +32,53 @@
   ~ THE SOFTWARE.
   -->
 
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/card_margin"
-    app:cardCornerRadius="@dimen/card_corner_radius">
+    android:layout_height="wrap_content">
 
   <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_margin="@dimen/item_margin">
+      android:layout_height="match_parent"
+      android:layout_margin="@dimen/create_pet_screen_margin">
 
-    <ImageView
-        android:id="@+id/image_owner"
-        android:layout_width="@dimen/image_size"
-        android:layout_height="@dimen/image_size"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/owner_images"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/item_margin_text"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/owner01" />
+        app:layout_constraintTop_toBottomOf="@id/text_input_layout_name" />
 
-    <TextView
-        android:id="@+id/text_view_owner_name"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_create"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/item_margin_text"
+        android:layout_marginTop="@dimen/item_margin_text"
+        android:text="@string/add_owner"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/image_owner"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Owner Name" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/owner_images" />
 
-    <TextView
-        android:id="@+id/text_view_number_of_pets"
-        style="@style/TextAppearance.MaterialComponents.Caption"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_input_layout_name"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/item_margin_text"
+        android:hint="@string/pet_s_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/image_owner"
-        app:layout_constraintTop_toBottomOf="@id/text_view_owner_name"
-        tools:text="Owner of 3 pets" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+      <com.google.android.material.textfield.TextInputEditText
+          android:id="@+id/edit_text_name"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
   </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+</androidx.core.widget.NestedScrollView>
+

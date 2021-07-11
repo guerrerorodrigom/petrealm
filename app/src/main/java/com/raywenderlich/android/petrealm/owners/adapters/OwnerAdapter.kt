@@ -32,19 +32,51 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.pets.adapters
+package com.raywenderlich.android.petrealm.owners.adapters
 
-import android.view.MotionEvent
-import androidx.recyclerview.selection.ItemDetailsLookup
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.raywenderlich.android.petrealm.R
+import com.raywenderlich.android.petrealm.databinding.ItemOwnerBinding
+import com.raywenderlich.android.petrealm.databinding.ItemPetBinding
+import com.raywenderlich.android.petrealm.owners.models.Owner
+import com.raywenderlich.android.petrealm.pets.models.Pet
+import com.squareup.picasso.Picasso
+import javax.inject.Inject
 
-class ItemLookup(
-    private val recyclerView: RecyclerView
-) : ItemDetailsLookup<Long>() {
+class OwnerAdapter @Inject constructor() : RecyclerView.Adapter<OwnerAdapter.OwnerViewHolder>() {
 
-  override fun getItemDetails(event: MotionEvent): ItemDetails<Long>? {
-    recyclerView.findChildViewUnder(event.x, event.y)?.let {
-      return (recyclerView.getChildViewHolder(it) as PetImageAdapter.PetImageViewHolder).getItemDetails()
-    } ?: return null
+  private val owners = mutableListOf<Owner>()
+
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OwnerViewHolder {
+    val binding = ItemOwnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+    return OwnerViewHolder(binding)
+  }
+
+  override fun onBindViewHolder(holder: OwnerViewHolder, position: Int) {
+    val owner = owners[position]
+    holder.bind(owner)
+  }
+
+  override fun getItemCount() = owners.size
+
+  fun addItems(owners: List<Owner>) {
+    this.owners.clear()
+    this.owners.addAll(owners)
+    notifyDataSetChanged()
+  }
+
+  class OwnerViewHolder(private val binding: ItemOwnerBinding) : RecyclerView.ViewHolder(binding.root) {
+
+    fun bind(owner: Owner) {
+      with(binding) {
+        owner.image?.let {
+          Picasso.get().load(it).into(imageOwner)
+        }
+        textViewOwnerName.text = owner.name
+        textViewNumberOfPets.text = binding.root.context.getString(R.string.number_pets, owner.numberOfPets)
+      }
+    }
   }
 }

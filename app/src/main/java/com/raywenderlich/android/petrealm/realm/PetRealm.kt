@@ -32,10 +32,9 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.pets.data
+package com.raywenderlich.android.petrealm.realm
 
 import androidx.annotation.DrawableRes
-import com.raywenderlich.android.petrealm.owners.data.OwnerRealm
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.Required
@@ -43,7 +42,7 @@ import org.bson.types.ObjectId
 
 open class PetRealm(
   @PrimaryKey
-  var id: ObjectId = ObjectId(),
+  var id: String = ObjectId().toHexString(),
   @Required
   var name: String = "",
   var age: Int = 0,

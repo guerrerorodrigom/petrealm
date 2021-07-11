@@ -43,11 +43,13 @@ import com.raywenderlich.android.petrealm.databinding.ItemPetBinding
 import com.raywenderlich.android.petrealm.owners.models.Owner
 import com.raywenderlich.android.petrealm.pets.models.Pet
 import com.squareup.picasso.Picasso
+import java.util.*
 import javax.inject.Inject
 
 class OwnerAdapter @Inject constructor() : RecyclerView.Adapter<OwnerAdapter.OwnerViewHolder>() {
 
   private val owners = mutableListOf<Owner>()
+  private var onItemClicked: ((ownerId: String) -> Unit)? = null
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OwnerViewHolder {
     val binding = ItemOwnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -67,7 +69,11 @@ class OwnerAdapter @Inject constructor() : RecyclerView.Adapter<OwnerAdapter.Own
     notifyDataSetChanged()
   }
 
-  class OwnerViewHolder(private val binding: ItemOwnerBinding) : RecyclerView.ViewHolder(binding.root) {
+  fun addOnClickAction(onItemClicked: (ownerId: String) -> Unit) {
+    this.onItemClicked = onItemClicked
+  }
+
+  inner class OwnerViewHolder(private val binding: ItemOwnerBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(owner: Owner) {
       with(binding) {
@@ -76,6 +82,9 @@ class OwnerAdapter @Inject constructor() : RecyclerView.Adapter<OwnerAdapter.Own
         }
         textViewOwnerName.text = owner.name
         textViewNumberOfPets.text = binding.root.context.getString(R.string.number_pets, owner.numberOfPets)
+        binding.root.setOnClickListener {
+          onItemClicked?.invoke(owner.id)
+        }
       }
     }
   }

@@ -38,8 +38,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.raywenderlich.android.petrealm.pets.data.PetRealm
-import com.raywenderlich.android.petrealm.pets.models.Pet
 import com.raywenderlich.android.petrealm.pets.repositories.PetsRepository
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

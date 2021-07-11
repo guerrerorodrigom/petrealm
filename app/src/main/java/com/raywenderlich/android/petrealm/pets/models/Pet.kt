@@ -35,8 +35,10 @@
 package com.raywenderlich.android.petrealm.pets.models
 
 data class Pet(
+  val id: String,
   val name: String,
   val age: Int,
   val petType: String = "",
   val image: Int? = null,
+  val isAdopted: Boolean = false
 )

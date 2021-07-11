@@ -34,7 +34,6 @@
 
 package com.raywenderlich.android.petrealm.realm
 
-import com.raywenderlich.android.petrealm.owners.data.OwnerRealm
 import io.realm.RealmMigration
 import org.bson.types.ObjectId
 

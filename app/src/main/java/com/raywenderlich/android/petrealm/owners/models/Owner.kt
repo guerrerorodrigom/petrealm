@@ -37,6 +37,7 @@ package com.raywenderlich.android.petrealm.owners.models
 import androidx.annotation.DrawableRes
 
 data class Owner(
+  val id: String,
   val name: String,
   @DrawableRes
   val image: Int? = null,

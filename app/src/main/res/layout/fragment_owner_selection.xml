@@ -32,61 +32,9 @@
   ~ THE SOFTWARE.
   -->
 
-<navigation android:id="@+id/nav_graph"
+<androidx.recyclerview.widget.RecyclerView android:id="@+id/owners_list"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/pets_to_adopt">
-
-  <dialog
-      android:id="@+id/add_pet"
-      android:name="com.raywenderlich.android.petrealm.pets.ui.AddPetFragment"
-      tools:layout="@layout/fragment_add_pet" />
-
-  <fragment
-      android:id="@+id/adopted_pets"
-      android:name="com.raywenderlich.android.petrealm.pets.ui.AdoptedPetsFragment"
-      tools:layout="@layout/fragment_adopted_pets" />
-
-  <fragment
-      android:id="@+id/owners"
-      android:name="com.raywenderlich.android.petrealm.owners.ui.OwnersFragment"
-      tools:layout="@layout/fragment_owners">
-    <action
-      android:id="@+id/action_add_owner"
-      app:destination="@id/add_owner" />
-  </fragment>
-
-  <fragment
-      android:id="@+id/pets_to_adopt"
-      android:name="com.raywenderlich.android.petrealm.pets.ui.PetsToAdoptFragment"
-      tools:layout="@layout/fragment_pets_to_adopt">
-    <action
-        android:id="@+id/action_add_pet"
-        app:destination="@id/add_pet" />
-    <action
-        android:id="@+id/action_select_owner"
-        app:destination="@id/select_owner">
-      <argument
-        android:name="petId"
-        app:argType="string"
-        app:nullable="false" />
-    </action>
-  </fragment>
-
-  <dialog
-    android:id="@+id/add_owner"
-    android:name="com.raywenderlich.android.petrealm.owners.ui.AddOwnerFragment"
-    tools:layout="@layout/fragment_add_owner" />
-
-  <dialog
-      android:id="@+id/select_owner"
-      android:name="com.raywenderlich.android.petrealm.owners.ui.OwnerSelectionFragment"
-      tools:layout="@layout/fragment_owner_selection">
-    <argument
-        android:name="petId"
-        app:argType="string"
-        app:nullable="false" />
-  </dialog>
-
-</navigation>
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:listitem="@layout/item_owner" />

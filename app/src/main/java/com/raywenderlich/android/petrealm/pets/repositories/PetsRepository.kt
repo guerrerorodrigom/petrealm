@@ -34,19 +34,19 @@
 
 package com.raywenderlich.android.petrealm.pets.repositories
 
-import com.raywenderlich.android.petrealm.pets.data.PetRealm
+import com.raywenderlich.android.petrealm.realm.PetRealm
 import com.raywenderlich.android.petrealm.pets.models.Pet
 import kotlinx.coroutines.flow.Flow
 
 interface PetsRepository {
 
-  suspend fun addPet(name: String, age: Int, type: String, image: Int?): Flow<Boolean>
+  fun addPet(name: String, age: Int, type: String, image: Int?): Flow<Boolean>
 
-  suspend fun getPetsToAdopt(): Flow<List<Pet>>
+  fun getPetsToAdopt(): Flow<List<Pet>>
 
-  suspend fun getAdoptedPets(): Flow<List<Pet>>
+  fun getAdoptedPets(): Flow<List<Pet>>
 
-  suspend fun updatePet(petRealm: PetRealm)
+  fun updatePet(petRealm: PetRealm)
 
-  suspend fun deletePet(petRealm: PetRealm)
+  fun deletePet(petRealm: PetRealm)
 }

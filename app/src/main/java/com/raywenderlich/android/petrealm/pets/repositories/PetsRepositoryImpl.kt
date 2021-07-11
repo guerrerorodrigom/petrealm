@@ -34,8 +34,8 @@
 
 package com.raywenderlich.android.petrealm.pets.repositories
 
-import com.raywenderlich.android.petrealm.pets.data.PetRealm
 import com.raywenderlich.android.petrealm.pets.models.Pet
+import com.raywenderlich.android.petrealm.realm.PetRealm
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.Sort
@@ -50,7 +50,7 @@ class PetsRepositoryImpl @Inject constructor(
     private val config: RealmConfiguration,
 ) : PetsRepository {
 
-  override suspend fun addPet(
+  override fun addPet(
       name: String,
       age: Int,
       type: String,
@@ -65,19 +65,26 @@ class PetsRepositoryImpl @Inject constructor(
     emit(true)
   }.flowOn(Dispatchers.IO)
 
-  override suspend fun getPetsToAdopt(): Flow<List<Pet>> = flow {
+  override fun getPetsToAdopt(): Flow<List<Pet>> = flow {
     val realm = Realm.getInstance(config)
     val petsToAdopt = realm
         .where(PetRealm::class.java)
         .equalTo("isAdopted", false)
         .findAll()
         .map {
-          Pet(name = it.name, age = it.age, image = it.image, petType = it.petType)
+          Pet(
+              name = it.name,
+              age = it.age,
+              image = it.image,
+              petType = it.petType,
+              isAdopted = it.isAdopted,
+              id = it.id
+          )
         }
     emit(petsToAdopt)
   }.flowOn(Dispatchers.IO)
 
-  override suspend fun getAdoptedPets(): Flow<List<Pet>> = flow {
+  override fun getAdoptedPets(): Flow<List<Pet>> = flow {
     val realm = Realm.getInstance(config)
     val petsToAdopt = realm
         .where(PetRealm::class.java)
@@ -85,16 +92,23 @@ class PetsRepositoryImpl @Inject constructor(
         .findAll()
         .sort("name", Sort.ASCENDING)
         .map {
-          Pet(name = it.name, age = it.age, image = it.image, petType = it.petType)
+          Pet(
+              name = it.name,
+              age = it.age,
+              image = it.image,
+              petType = it.petType,
+              id = it.id,
+              isAdopted = it.isAdopted
+          )
         }
     emit(petsToAdopt)
   }.flowOn(Dispatchers.IO)
 
-  override suspend fun updatePet(petRealm: PetRealm) {
+  override fun updatePet(petRealm: PetRealm) {
     TODO("Not yet implemented")
   }
 
-  override suspend fun deletePet(petRealm: PetRealm) {
+  override fun deletePet(petRealm: PetRealm) {
     TODO("Not yet implemented")
   }
 }

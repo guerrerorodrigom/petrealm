@@ -34,8 +34,9 @@
 
 package com.raywenderlich.android.petrealm.owners.repository
 
-import com.raywenderlich.android.petrealm.owners.data.OwnerRealm
 import com.raywenderlich.android.petrealm.owners.models.Owner
+import com.raywenderlich.android.petrealm.realm.OwnerRealm
+import com.raywenderlich.android.petrealm.realm.PetRealm
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.Sort
@@ -67,8 +68,31 @@ class OwnersRepositoryImpl @Inject constructor(
         .findAll()
         .sort("name", Sort.ASCENDING)
         .map {
-          Owner(name = it.name, image = it.image)
+          Owner(name = it.name, image = it.image, id = it.id)
         }
     emit(owners)
-  }
+  }.flowOn(Dispatchers.IO)
+
+  override fun adoptPet(petId: String, ownerId: String): Flow<Boolean> = flow {
+    val realm = Realm.getInstance(configuration)
+
+    realm.executeTransactionAwait { realmTransaction ->
+      val pet = realmTransaction
+          .where(PetRealm::class.java)
+          .equalTo("id", petId)
+          .findFirst()
+
+      val owner = realmTransaction
+          .where(OwnerRealm::class.java)
+          .equalTo("id", ownerId)
+          .findFirst()
+
+      pet?.isAdopted = true
+      pet?.owner = owner
+
+      owner?.pets?.add(pet)
+    }
+
+    emit(true)
+  }.flowOn(Dispatchers.IO)
 }

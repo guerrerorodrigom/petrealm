@@ -42,4 +42,6 @@ interface OwnersRepository {
   fun addOwner(name: String, image: Int?): Flow<Boolean>
 
   fun getOwners(): Flow<List<Owner>>
+
+  fun adoptPet(petId: String, ownerId: String): Flow<Boolean>
 }

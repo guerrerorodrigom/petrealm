@@ -36,10 +36,13 @@ package com.raywenderlich.android.petrealm.pets.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.petrealm.R
 import com.raywenderlich.android.petrealm.databinding.ItemPetBinding
 import com.raywenderlich.android.petrealm.pets.models.Pet
+import com.raywenderlich.android.petrealm.pets.ui.PetsToAdoptFragmentDirections
 import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
@@ -76,6 +79,12 @@ class PetAdapter @Inject constructor() : RecyclerView.Adapter<PetAdapter.PetView
             .resources.getQuantityString(R.plurals.age, pet.age))
         textViewPetName.text = pet.name
         textViewPetType.text = pet.petType
+        buttonAdopt.isVisible = pet.isAdopted.not()
+        buttonAdopt.setOnClickListener {
+          val navController = Navigation.findNavController(binding.root)
+          val action = PetsToAdoptFragmentDirections.actionSelectOwner(pet.id)
+          navController.navigate(action)
+        }
       }
     }
   }

@@ -35,14 +35,32 @@
 package com.raywenderlich.android.petrealm.pets.ui
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.raywenderlich.android.petrealm.R
+import com.raywenderlich.android.petrealm.databinding.FragmentAdoptedPetsBinding
+import com.raywenderlich.android.petrealm.pets.adapters.PetAdapter
+import com.raywenderlich.android.petrealm.pets.viewmodels.AdoptedPetsViewModel
 import dagger.android.support.AndroidSupportInjection
+import javax.inject.Inject
 
 class AdoptedPetsFragment : Fragment() {
+
+  private var binding: FragmentAdoptedPetsBinding? = null
+
+  @Inject
+  lateinit var petsAdapter: PetAdapter
+
+  @Inject
+  lateinit var viewModelFactory: ViewModelProvider.Factory
+
+  private val viewModel: AdoptedPetsViewModel by viewModels { viewModelFactory }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     AndroidSupportInjection.inject(this)
@@ -51,7 +69,26 @@ class AdoptedPetsFragment : Fragment() {
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View? {
-    // Inflate the layout for this fragment
-    return inflater.inflate(R.layout.fragment_adopted_pets, container, false)
+    binding = FragmentAdoptedPetsBinding.inflate(layoutInflater, container, false)
+    return binding?.root
+  }
+
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+
+    binding?.apply {
+      adoptedPetsList.layoutManager = LinearLayoutManager(requireContext())
+      adoptedPetsList.adapter = petsAdapter
+    }
+
+    viewModel.adoptedPets.observe(viewLifecycleOwner) {
+      petsAdapter.addItems(it)
+    }
+  }
+
+  override fun onResume() {
+    super.onResume()
+
+    viewModel.getPetsToAdopt()
   }
 }

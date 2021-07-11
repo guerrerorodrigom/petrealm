@@ -44,7 +44,7 @@ interface PetsRepository {
 
   suspend fun getPetsToAdopt(): Flow<List<Pet>>
 
-  suspend fun getAdoptedPets(): List<Pet>
+  suspend fun getAdoptedPets(): Flow<List<Pet>>
 
   suspend fun updatePet(petRealm: PetRealm)
 

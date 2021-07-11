@@ -38,6 +38,7 @@ import com.raywenderlich.android.petrealm.pets.data.PetRealm
 import com.raywenderlich.android.petrealm.pets.models.Pet
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import io.realm.Sort
 import io.realm.kotlin.executeTransactionAwait
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -76,9 +77,18 @@ class PetsRepositoryImpl @Inject constructor(
     emit(petsToAdopt)
   }.flowOn(Dispatchers.IO)
 
-  override suspend fun getAdoptedPets(): List<Pet> {
-    TODO("Not yet implemented")
-  }
+  override suspend fun getAdoptedPets(): Flow<List<Pet>> = flow {
+    val realm = Realm.getInstance(config)
+    val petsToAdopt = realm
+        .where(PetRealm::class.java)
+        .equalTo("isAdopted", true)
+        .findAll()
+        .sort("name", Sort.ASCENDING)
+        .map {
+          Pet(name = it.name, age = it.age, image = it.image, petType = it.petType)
+        }
+    emit(petsToAdopt)
+  }.flowOn(Dispatchers.IO)
 
   override suspend fun updatePet(petRealm: PetRealm) {
     TODO("Not yet implemented")

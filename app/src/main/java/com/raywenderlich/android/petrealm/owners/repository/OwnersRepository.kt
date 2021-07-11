@@ -44,4 +44,6 @@ interface OwnersRepository {
   fun getOwners(): Flow<List<Owner>>
 
   fun adoptPet(petId: String, ownerId: String): Flow<Boolean>
+
+  fun deleteOwner(ownerId: String): Flow<Boolean>
 }

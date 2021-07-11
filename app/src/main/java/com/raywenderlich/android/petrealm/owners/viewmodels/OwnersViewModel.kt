@@ -43,7 +43,6 @@ import com.raywenderlich.android.petrealm.owners.repository.OwnersRepository
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 class OwnersViewModel @Inject constructor(
@@ -54,6 +53,12 @@ class OwnersViewModel @Inject constructor(
   val owners: LiveData<List<Owner>>
     get() {
       return _owners
+    }
+
+  private val _ownerRemoved = MutableLiveData<Boolean>()
+  val ownerRemoved: LiveData<Boolean>
+    get() {
+      return _ownerRemoved
     }
 
   private val _petAdopted = MutableLiveData(false)
@@ -74,6 +79,14 @@ class OwnersViewModel @Inject constructor(
     viewModelScope.launch {
       ownersRepository.adoptPet(petId, ownerId).collect {
         _petAdopted.value = true
+      }
+    }
+  }
+
+  fun removeOwner(ownerId: String) {
+    viewModelScope.launch {
+      ownersRepository.deleteOwner(ownerId).collect {
+        _ownerRemoved.value = it
       }
     }
   }

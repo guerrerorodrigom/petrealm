@@ -81,6 +81,9 @@ class PetsToAdoptFragment : Fragment() {
 
     binding?.apply {
       petsToAdoptList.layoutManager = LinearLayoutManager(requireContext())
+      petsAdapter.addRemovePetAction { petId ->
+        viewModel.removePet(petId)
+      }
       petsToAdoptList.adapter = petsAdapter
 
       buttonAddPet.setOnClickListener {

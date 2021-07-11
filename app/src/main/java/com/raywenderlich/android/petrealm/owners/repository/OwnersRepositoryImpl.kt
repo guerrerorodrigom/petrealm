@@ -49,12 +49,12 @@ import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class OwnersRepositoryImpl @Inject constructor(
-    private val configuration: RealmConfiguration
+    private val config: RealmConfiguration
 ) : OwnersRepository {
 
   override fun addOwner(name: String, image: Int?): Flow<Boolean> = flow {
     emit(false)
-    val realm = Realm.getInstance(configuration)
+    val realm = Realm.getInstance(config)
     realm.executeTransactionAwait {
       val owner = OwnerRealm(name = name, image = image)
       it.insert(owner)
@@ -63,7 +63,7 @@ class OwnersRepositoryImpl @Inject constructor(
   }.flowOn(Dispatchers.IO)
 
   override fun getOwners(): Flow<List<Owner>> = flow {
-    val realm = Realm.getInstance(configuration)
+    val realm = Realm.getInstance(config)
     val owners = realm
         .where(OwnerRealm::class.java)
         .findAll()
@@ -79,17 +79,17 @@ class OwnersRepositoryImpl @Inject constructor(
                 isAdopted = true
             )
           }
-          val petCount = realm.
-          where(PetRealm::class.java)
+          val petCount = realm.where(PetRealm::class.java)
               .equalTo("owner.id", owner.id)
               .count()
-          Owner(name = owner.name, image = owner.image, id = owner.id, pets = pets, numberOfPets = petCount)
+          Owner(name = owner.name, image = owner.image, id = owner.id, pets = pets,
+              numberOfPets = petCount)
         }
     emit(owners)
   }.flowOn(Dispatchers.IO)
 
   override fun adoptPet(petId: String, ownerId: String): Flow<Boolean> = flow {
-    val realm = Realm.getInstance(configuration)
+    val realm = Realm.getInstance(config)
 
     realm.executeTransactionAwait { realmTransaction ->
       val pet = realmTransaction
@@ -103,6 +103,22 @@ class OwnersRepositoryImpl @Inject constructor(
           .findFirst()
 
       owner?.pets?.add(pet)
+    }
+
+    emit(true)
+  }.flowOn(Dispatchers.IO)
+
+  override fun deleteOwner(ownerId: String): Flow<Boolean> = flow {
+    val realm = Realm.getInstance(config)
+
+    realm.executeTransactionAwait { realmTransaction ->
+      val ownerToRemove = realmTransaction
+          .where(OwnerRealm::class.java)
+          .equalTo("id", ownerId)
+          .findFirst()
+
+      ownerToRemove?.pets?.deleteAllFromRealm()
+      ownerToRemove?.deleteFromRealm()
     }
 
     emit(true)

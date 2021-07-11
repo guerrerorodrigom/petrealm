@@ -80,6 +80,9 @@ class OwnersFragment : Fragment() {
 
     binding?.apply {
       ownersList.layoutManager = LinearLayoutManager(requireContext())
+      ownersAdapter.addRemoveAction { ownerId ->
+        viewModel.removeOwner(ownerId)
+      }
       ownersList.adapter = ownersAdapter
 
       buttonAddOwner.setOnClickListener {

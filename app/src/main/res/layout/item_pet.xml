@@ -110,5 +110,15 @@
         app:layout_constraintStart_toEndOf="@id/image_pet"
         app:layout_constraintTop_toBottomOf="@id/text_view_pet_owner" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_remove"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/item_margin_text"
+        android:text="@string/remove"
+        app:layout_constraintStart_toEndOf="@id/button_adopt"
+        app:layout_constraintTop_toBottomOf="@id/text_view_pet_owner" />
+
   </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

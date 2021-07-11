@@ -54,10 +54,24 @@ class PetsToAdoptViewModel @Inject constructor(
       return _petsToAdopt
     }
 
+  private val _petRemoved = MutableLiveData<Boolean>(false)
+  val petRemoved: LiveData<Boolean>
+    get() {
+      return _petRemoved
+    }
+
   fun getPetsToAdopt() {
     viewModelScope.launch {
       petsRepository.getPetsToAdopt().collect {
         _petsToAdopt.value = it
+      }
+    }
+  }
+
+  fun removePet(petId: String) {
+    viewModelScope.launch {
+      petsRepository.deletePet(petId).collect {
+        _petRemoved.value = it
       }
     }
   }

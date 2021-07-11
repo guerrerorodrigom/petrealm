@@ -48,5 +48,5 @@ interface PetsRepository {
 
   fun updatePet(petRealm: PetRealm)
 
-  fun deletePet(petRealm: PetRealm)
+  fun deletePet(petId: String): Flow<Boolean>
 }

@@ -49,6 +49,7 @@ import javax.inject.Inject
 class PetAdapter @Inject constructor() : RecyclerView.Adapter<PetAdapter.PetViewHolder>() {
 
   private val pets = mutableListOf<Pet>()
+  private var removePet: ((petId: String) -> Unit)? = null
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetViewHolder {
     val binding = ItemPetBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -68,7 +69,12 @@ class PetAdapter @Inject constructor() : RecyclerView.Adapter<PetAdapter.PetView
     notifyDataSetChanged()
   }
 
-  class PetViewHolder(private val binding: ItemPetBinding) : RecyclerView.ViewHolder(binding.root) {
+  fun addRemovePetAction(removePet: (petId: String) -> Unit) {
+    this.removePet = removePet
+  }
+
+  inner class PetViewHolder(private val binding: ItemPetBinding) : RecyclerView.ViewHolder(binding
+      .root) {
 
     fun bind(pet: Pet) {
       with(binding) {
@@ -88,6 +94,11 @@ class PetAdapter @Inject constructor() : RecyclerView.Adapter<PetAdapter.PetView
           val navController = Navigation.findNavController(binding.root)
           val action = PetsToAdoptFragmentDirections.actionSelectOwner(pet.id)
           navController.navigate(action)
+        }
+        buttonRemove.setOnClickListener {
+          pets.removeAt(adapterPosition)
+          notifyItemRemoved(adapterPosition)
+          removePet?.invoke(pet.id)
         }
       }
     }

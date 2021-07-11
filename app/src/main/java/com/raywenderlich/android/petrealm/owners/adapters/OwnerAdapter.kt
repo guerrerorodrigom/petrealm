@@ -36,20 +36,20 @@ package com.raywenderlich.android.petrealm.owners.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.petrealm.R
 import com.raywenderlich.android.petrealm.databinding.ItemOwnerBinding
-import com.raywenderlich.android.petrealm.databinding.ItemPetBinding
 import com.raywenderlich.android.petrealm.owners.models.Owner
-import com.raywenderlich.android.petrealm.pets.models.Pet
 import com.squareup.picasso.Picasso
-import java.util.*
 import javax.inject.Inject
 
 class OwnerAdapter @Inject constructor() : RecyclerView.Adapter<OwnerAdapter.OwnerViewHolder>() {
 
   private val owners = mutableListOf<Owner>()
   private var onItemClicked: ((ownerId: String) -> Unit)? = null
+  private var removeAction: ((ownerId: String) -> Unit)? = null
+  private var showRemoveButtons = false
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OwnerViewHolder {
     val binding = ItemOwnerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -73,7 +73,13 @@ class OwnerAdapter @Inject constructor() : RecyclerView.Adapter<OwnerAdapter.Own
     this.onItemClicked = onItemClicked
   }
 
-  inner class OwnerViewHolder(private val binding: ItemOwnerBinding) : RecyclerView.ViewHolder(binding.root) {
+  fun addRemoveAction(removeAction: (ownerId: String) -> Unit) {
+    showRemoveButtons = true
+    this.removeAction = removeAction
+  }
+
+  inner class OwnerViewHolder(private val binding: ItemOwnerBinding) :
+      RecyclerView.ViewHolder(binding.root) {
 
     fun bind(owner: Owner) {
       with(binding) {
@@ -81,7 +87,14 @@ class OwnerAdapter @Inject constructor() : RecyclerView.Adapter<OwnerAdapter.Own
           Picasso.get().load(it).into(imageOwner)
         }
         textViewOwnerName.text = owner.name
-        textViewNumberOfPets.text = binding.root.context.getString(R.string.number_pets, owner.numberOfPets)
+        textViewNumberOfPets.text = binding.root.context.getString(R.string.number_pets,
+            owner.numberOfPets)
+        buttonRemove.isVisible = showRemoveButtons
+        buttonRemove.setOnClickListener {
+          owners.removeAt(adapterPosition)
+          notifyItemRemoved(adapterPosition)
+          removeAction?.invoke(owner.id)
+        }
         binding.root.setOnClickListener {
           onItemClicked?.invoke(owner.id)
         }

@@ -110,7 +110,18 @@ class PetsRepositoryImpl @Inject constructor(
     TODO("Not yet implemented")
   }
 
-  override fun deletePet(petRealm: PetRealm) {
-    TODO("Not yet implemented")
-  }
+  override fun deletePet(petId: String): Flow<Boolean> = flow {
+    val realm = Realm.getInstance(config)
+
+    realm.executeTransactionAwait { realmTransaction ->
+      val petToRemove = realmTransaction
+          .where(PetRealm::class.java)
+          .equalTo("id", petId)
+          .findFirst()
+
+      petToRemove?.deleteFromRealm()
+    }
+
+    emit(true)
+  }.flowOn(Dispatchers.IO)
 }

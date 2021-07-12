@@ -69,4 +69,12 @@ class PetsToAdoptViewModel @Inject constructor(
       }
     }
   }
+
+  fun filterPets(petType: String) {
+    viewModelScope.launch {
+      petsRepository.filterPets(petType).collect {
+        _petDataStatus.value = it
+      }
+    }
+  }
 }

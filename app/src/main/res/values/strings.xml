@@ -35,6 +35,36 @@
     <item name="wolf">Wolf</item>
   </string-array>
 
+  <string-array name="pet_filter">
+    <item name="all">All</item>
+    <item name="bear">Bear</item>
+    <item name="bird">Bird</item>
+    <item name="bug">Bug</item>
+    <item name="cat">Cat</item>
+    <item name="chameleon">Chameleon</item>
+    <item name="cow">Cow</item>
+    <item name="dog">Dog</item>
+    <item name="duck">Duck</item>
+    <item name="fish">Fish</item>
+    <item name="fox">Fox</item>
+    <item name="frog">Frog</item>
+    <item name="monkey">Monkey</item>
+    <item name="octopus">Octopus</item>
+    <item name="owl">Owl</item>
+    <item name="panda">Panda</item>
+    <item name="penguin">Penguin</item>
+    <item name="pig">Pig</item>
+    <item name="rat">Rat</item>
+    <item name="seal">Seal</item>
+    <item name="skunk">Skunk</item>
+    <item name="snake">Snake</item>
+    <item name="spider">Spider</item>
+    <item name="squid">Squid</item>
+    <item name="squirrel">Squirrel</item>
+    <item name="tiger">Tiger</item>
+    <item name="wolf">Wolf</item>
+  </string-array>
+
   <string name="pet_s_name">Name</string>
   <string name="age">Age</string>
   <string name="add_pet">Add Pet</string>

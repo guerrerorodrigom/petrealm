@@ -38,6 +38,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -91,6 +93,8 @@ class PetsToAdoptFragment : Fragment() {
       buttonAddPet.setOnClickListener {
         findNavController().navigate(R.id.action_add_pet)
       }
+
+      setupSpinner()
     }
 
     viewModel.petDataStatus.observe(viewLifecycleOwner) { status ->
@@ -112,5 +116,29 @@ class PetsToAdoptFragment : Fragment() {
     super.onResume()
 
     viewModel.getPetsToAdopt()
+  }
+
+  private fun setupSpinner() {
+    binding?.apply {
+      ArrayAdapter.createFromResource(requireContext(), R.array.pet_filter,
+          android.R.layout.simple_spinner_item)
+          .also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerFilter.adapter = adapter
+          }
+      spinnerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+          if (position == 0) {
+            viewModel.getPetsToAdopt()
+          } else {
+            val petType = requireContext().resources.getStringArray(R.array.pet_filter)[position]
+            viewModel.filterPets(petType)
+          }
+        }
+
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+        }
+      }
+    }
   }
 }

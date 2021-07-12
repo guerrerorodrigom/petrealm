@@ -45,4 +45,6 @@ interface PetsRepository {
   fun getAdoptedPets(): Flow<PetDataStatus>
 
   fun deletePet(petId: String): Flow<PetDataStatus>
+
+  fun filterPets(petType: String): Flow<PetDataStatus>
 }

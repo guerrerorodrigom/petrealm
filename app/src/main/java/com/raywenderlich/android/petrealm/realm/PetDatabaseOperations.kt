@@ -65,14 +65,7 @@ class PetDatabaseOperations @Inject constructor(
         .isEmpty("owner")
         .findAll()
         .map {
-          Pet(
-              name = it.name,
-              age = it.age,
-              image = it.image,
-              petType = it.petType,
-              isAdopted = false,
-              id = it.id
-          )
+          mapPet(it)
         }
   }
 
@@ -84,16 +77,7 @@ class PetDatabaseOperations @Inject constructor(
         .findAll()
         .sort("name", Sort.ASCENDING)
         .map {
-          val name = it.owner?.get(0)?.name
-          Pet(
-              name = it.name,
-              age = it.age,
-              image = it.image,
-              petType = it.petType,
-              id = it.id,
-              isAdopted = true,
-              ownerName = name
-          )
+          mapPetsWithOwner(it)
         }
   }
 
@@ -108,4 +92,39 @@ class PetDatabaseOperations @Inject constructor(
       petToRemove?.deleteFromRealm()
     }
   }
+
+  fun retrieveFilteredPets(petType: String): List<Pet> {
+    val realm = Realm.getInstance(config)
+    return realm
+        .where(PetRealm::class.java)
+        .isEmpty("owner")
+        .and()
+        .beginsWith("petType", petType)
+        .findAll()
+        .map {
+          mapPet(it)
+        }
+  }
+
+  private fun mapPetsWithOwner(pet: PetRealm): Pet {
+    val name = pet.owner?.get(0)?.name
+    return Pet(
+        name = pet.name,
+        age = pet.age,
+        image = pet.image,
+        petType = pet.petType,
+        id = pet.id,
+        isAdopted = true,
+        ownerName = name
+    )
+  }
+
+  private fun mapPet(pet: PetRealm) = Pet(
+      name = pet.name,
+      age = pet.age,
+      image = pet.image,
+      petType = pet.petType,
+      isAdopted = false,
+      id = pet.id
+  )
 }

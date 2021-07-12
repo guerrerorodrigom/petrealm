@@ -64,8 +64,8 @@ class PetsRepositoryImpl @Inject constructor(
 
   override fun getAdoptedPets(): Flow<PetDataStatus> = flow {
     emit(PetDataStatus.Loading)
-    val petsToAdopt = databaseOperations.retrieveAdoptedPets()
-    emit(PetDataStatus.Result(petsToAdopt))
+    val adoptedPets = databaseOperations.retrieveAdoptedPets()
+    emit(PetDataStatus.Result(adoptedPets))
   }.flowOn(Dispatchers.IO)
 
   override fun deletePet(petId: String): Flow<PetDataStatus> = flow {
@@ -73,4 +73,10 @@ class PetsRepositoryImpl @Inject constructor(
     databaseOperations.removePet(petId)
     emit(PetDataStatus.Deleted)
   }.flowOn(Dispatchers.IO)
+
+  override fun filterPets(petType: String): Flow<PetDataStatus> = flow {
+    emit(PetDataStatus.Loading)
+    val filteredPets = databaseOperations.retrieveFilteredPets(petType)
+    emit(PetDataStatus.Result(filteredPets))
+  }
 }

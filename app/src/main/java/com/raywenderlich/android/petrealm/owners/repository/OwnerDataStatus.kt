@@ -32,46 +32,14 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.pets.viewmodels
+package com.raywenderlich.android.petrealm.owners.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.raywenderlich.android.petrealm.pets.repositories.PetDataStatus
-import com.raywenderlich.android.petrealm.pets.repositories.PetsRepository
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import javax.inject.Inject
+import com.raywenderlich.android.petrealm.owners.models.Owner
 
-class AddPetViewModel @Inject constructor(
-    private val petsRepository: PetsRepository
-) : ViewModel() {
-
-  private val _petDataStatus = MutableLiveData<PetDataStatus>()
-  val petDataStatus: LiveData<PetDataStatus>
-    get() {
-      return _petDataStatus
-    }
-  private var petType: String = ""
-  private var selectedImage: Int? = null
-
-  fun isValid(name: String, age: String) =
-      name.isNotEmpty() && petType.isNotEmpty() && age.isNotEmpty() && age.toIntOrNull() != null
-
-  fun setPetType(petType: String) {
-    this.petType = petType
-  }
-
-  fun addPet(name: String, age: String) {
-    viewModelScope.launch {
-      petsRepository.addPet(name, age.toIntOrNull() ?: 0, petType, selectedImage).collect {
-        _petDataStatus.value = it
-      }
-    }
-  }
-
-  fun setSelectedImage(selectedImage: Int) {
-    this.selectedImage = selectedImage
-  }
+sealed class OwnerDataStatus {
+  object Loading : OwnerDataStatus()
+  object Added : OwnerDataStatus()
+  object Deleted : OwnerDataStatus()
+  object PetAdopted : OwnerDataStatus()
+  data class Result(val ownerList: List<Owner>) : OwnerDataStatus()
 }

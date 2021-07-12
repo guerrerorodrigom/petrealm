@@ -46,12 +46,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.raywenderlich.android.petrealm.R
-import com.raywenderlich.android.petrealm.databinding.FragmentAddPetBinding
 import com.raywenderlich.android.petrealm.common.adapters.ImageAdapter
 import com.raywenderlich.android.petrealm.common.utils.addTracker
+import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
+import com.raywenderlich.android.petrealm.databinding.FragmentAddPetBinding
+import com.raywenderlich.android.petrealm.pets.repositories.PetDataStatus
 import com.raywenderlich.android.petrealm.pets.utils.getPetImages
 import com.raywenderlich.android.petrealm.pets.viewmodels.AddPetViewModel
-import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -59,6 +60,7 @@ class AddPetFragment : BottomSheetDialogFragment() {
 
   @Inject
   lateinit var imagesAdapter: ImageAdapter
+
   @Inject
   lateinit var viewModelFactory: ViewModelProvider.Factory
 
@@ -84,10 +86,12 @@ class AddPetFragment : BottomSheetDialogFragment() {
     setupSelectionTracker()
     setupButton()
 
-    viewModel.addPetCompleted.observe(viewLifecycleOwner) { completed ->
-      if (completed) {
-        sharedViewModel.reload()
-        dismiss()
+    viewModel.petDataStatus.observe(viewLifecycleOwner) { status ->
+      when (status) {
+        PetDataStatus.Added -> {
+          sharedViewModel.reload()
+          dismiss()
+        }
       }
     }
   }

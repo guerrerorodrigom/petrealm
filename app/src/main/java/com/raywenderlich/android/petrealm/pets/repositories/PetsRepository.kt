@@ -40,13 +40,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface PetsRepository {
 
-  fun addPet(name: String, age: Int, type: String, image: Int?): Flow<Boolean>
+  fun addPet(name: String, age: Int, type: String, image: Int?): Flow<PetDataStatus>
 
-  fun getPetsToAdopt(): Flow<List<Pet>>
+  fun getPetsToAdopt(): Flow<PetDataStatus>
 
-  fun getAdoptedPets(): Flow<List<Pet>>
+  fun getAdoptedPets(): Flow<PetDataStatus>
 
   fun updatePet(petRealm: PetRealm)
 
-  fun deletePet(petId: String): Flow<Boolean>
+  fun deletePet(petId: String): Flow<PetDataStatus>
 }

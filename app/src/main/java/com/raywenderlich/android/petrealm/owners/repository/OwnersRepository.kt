@@ -39,11 +39,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface OwnersRepository {
 
-  fun addOwner(name: String, image: Int?): Flow<Boolean>
+  fun addOwner(name: String, image: Int?): Flow<OwnerDataStatus>
 
-  fun getOwners(): Flow<List<Owner>>
+  fun getOwners(): Flow<OwnerDataStatus>
 
-  fun adoptPet(petId: String, ownerId: String): Flow<Boolean>
+  fun adoptPet(petId: String, ownerId: String): Flow<OwnerDataStatus>
 
-  fun deleteOwner(ownerId: String): Flow<Boolean>
+  fun deleteOwner(ownerId: String): Flow<OwnerDataStatus>
 }

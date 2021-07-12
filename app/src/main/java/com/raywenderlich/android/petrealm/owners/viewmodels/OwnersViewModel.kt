@@ -38,7 +38,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.raywenderlich.android.petrealm.owners.models.Owner
+import com.raywenderlich.android.petrealm.owners.repository.OwnerDataStatus
 import com.raywenderlich.android.petrealm.owners.repository.OwnersRepository
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -49,28 +49,16 @@ class OwnersViewModel @Inject constructor(
     private val ownersRepository: OwnersRepository
 ) : ViewModel() {
 
-  private val _owners = MutableLiveData(emptyList<Owner>())
-  val owners: LiveData<List<Owner>>
+  private val _ownerDataStatus = MutableLiveData<OwnerDataStatus>()
+  val ownerDataStatus: LiveData<OwnerDataStatus>
     get() {
-      return _owners
-    }
-
-  private val _ownerRemoved = MutableLiveData<Boolean>()
-  val ownerRemoved: LiveData<Boolean>
-    get() {
-      return _ownerRemoved
-    }
-
-  private val _petAdopted = MutableLiveData(false)
-  val petAdopted: LiveData<Boolean>
-    get() {
-      return _petAdopted
+      return _ownerDataStatus
     }
 
   fun getOwners() {
     viewModelScope.launch {
       ownersRepository.getOwners().collectLatest {
-        _owners.value = it
+        _ownerDataStatus.value = it
       }
     }
   }
@@ -78,7 +66,7 @@ class OwnersViewModel @Inject constructor(
   fun adoptPet(petId: String, ownerId: String) {
     viewModelScope.launch {
       ownersRepository.adoptPet(petId, ownerId).collect {
-        _petAdopted.value = true
+        _ownerDataStatus.value = it
       }
     }
   }
@@ -86,7 +74,7 @@ class OwnersViewModel @Inject constructor(
   fun removeOwner(ownerId: String) {
     viewModelScope.launch {
       ownersRepository.deleteOwner(ownerId).collect {
-        _ownerRemoved.value = it
+        _ownerDataStatus.value = it
       }
     }
   }

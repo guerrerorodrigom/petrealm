@@ -55,17 +55,18 @@ class PetsRepositoryImpl @Inject constructor(
       age: Int,
       type: String,
       image: Int?
-  ): Flow<Boolean> = flow {
-    emit(false)
+  ): Flow<PetDataStatus> = flow {
+    emit(PetDataStatus.Loading)
     val realm = Realm.getInstance(config)
     realm.executeTransactionAwait {
       val pet = PetRealm(name = name, age = age, petType = type, image = image)
       it.insert(pet)
     }
-    emit(true)
+    emit(PetDataStatus.Added)
   }.flowOn(Dispatchers.IO)
 
-  override fun getPetsToAdopt(): Flow<List<Pet>> = flow {
+  override fun getPetsToAdopt(): Flow<PetDataStatus> = flow {
+    emit(PetDataStatus.Loading)
     val realm = Realm.getInstance(config)
     val petsToAdopt = realm
         .where(PetRealm::class.java)
@@ -81,10 +82,11 @@ class PetsRepositoryImpl @Inject constructor(
               id = it.id
           )
         }
-    emit(petsToAdopt)
+    emit(PetDataStatus.Result(petsToAdopt))
   }.flowOn(Dispatchers.IO)
 
-  override fun getAdoptedPets(): Flow<List<Pet>> = flow {
+  override fun getAdoptedPets(): Flow<PetDataStatus> = flow {
+    emit(PetDataStatus.Loading)
     val realm = Realm.getInstance(config)
     val petsToAdopt = realm
         .where(PetRealm::class.java)
@@ -103,16 +105,16 @@ class PetsRepositoryImpl @Inject constructor(
               ownerName = name
           )
         }
-    emit(petsToAdopt)
+    emit(PetDataStatus.Result(petsToAdopt))
   }.flowOn(Dispatchers.IO)
 
   override fun updatePet(petRealm: PetRealm) {
     TODO("Not yet implemented")
   }
 
-  override fun deletePet(petId: String): Flow<Boolean> = flow {
+  override fun deletePet(petId: String): Flow<PetDataStatus> = flow {
+    emit(PetDataStatus.Loading)
     val realm = Realm.getInstance(config)
-
     realm.executeTransactionAwait { realmTransaction ->
       val petToRemove = realmTransaction
           .where(PetRealm::class.java)
@@ -122,6 +124,6 @@ class PetsRepositoryImpl @Inject constructor(
       petToRemove?.deleteFromRealm()
     }
 
-    emit(true)
+    emit(PetDataStatus.Deleted)
   }.flowOn(Dispatchers.IO)
 }

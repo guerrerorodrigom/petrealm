@@ -48,6 +48,7 @@ import com.raywenderlich.android.petrealm.common.adapters.ImageAdapter
 import com.raywenderlich.android.petrealm.common.utils.addTracker
 import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
 import com.raywenderlich.android.petrealm.databinding.FragmentAddOwnerBinding
+import com.raywenderlich.android.petrealm.owners.repository.OwnerDataStatus
 import com.raywenderlich.android.petrealm.owners.utils.getOwnersImages
 import com.raywenderlich.android.petrealm.owners.viewmodels.AddOwnerViewModel
 import dagger.android.support.AndroidSupportInjection
@@ -82,10 +83,12 @@ class AddOwnerFragment : BottomSheetDialogFragment() {
     setupSelectionTracker()
     setupButton()
 
-    viewModel.addOwnerCompleted.observe(viewLifecycleOwner) { completed ->
-      if (completed) {
-        sharedViewModel.reload()
-        dismiss()
+    viewModel.ownerDataStatus.observe(viewLifecycleOwner) { status ->
+      when (status) {
+        OwnerDataStatus.Added -> {
+          sharedViewModel.reload()
+          dismiss()
+        }
       }
     }
   }

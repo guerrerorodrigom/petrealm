@@ -38,6 +38,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -45,10 +46,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.raywenderlich.android.petrealm.R
+import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
 import com.raywenderlich.android.petrealm.databinding.FragmentPetsToAdoptBinding
 import com.raywenderlich.android.petrealm.pets.adapters.PetAdapter
+import com.raywenderlich.android.petrealm.pets.repositories.PetDataStatus
 import com.raywenderlich.android.petrealm.pets.viewmodels.PetsToAdoptViewModel
-import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -91,8 +93,12 @@ class PetsToAdoptFragment : Fragment() {
       }
     }
 
-    viewModel.petsToAdopt.observe(viewLifecycleOwner) {
-      petsAdapter.addItems(it)
+    viewModel.petDataStatus.observe(viewLifecycleOwner) { status ->
+      binding?.progress?.isVisible = false
+      when (status) {
+        PetDataStatus.Loading -> binding?.progress?.isVisible = true
+        is PetDataStatus.Result -> petsAdapter.addItems(status.petList)
+      }
     }
 
     sharedViewModel.reload.observe(viewLifecycleOwner) { reload ->

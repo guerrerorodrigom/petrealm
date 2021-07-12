@@ -38,17 +38,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.raywenderlich.android.petrealm.R
+import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
 import com.raywenderlich.android.petrealm.databinding.FragmentOwnersBinding
 import com.raywenderlich.android.petrealm.owners.adapters.OwnerAdapter
+import com.raywenderlich.android.petrealm.owners.repository.OwnerDataStatus
 import com.raywenderlich.android.petrealm.owners.viewmodels.OwnersViewModel
-import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -70,7 +74,8 @@ class OwnersFragment : Fragment() {
     super.onCreate(savedInstanceState)
   }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+      savedInstanceState: Bundle?): View? {
     binding = FragmentOwnersBinding.inflate(inflater, container, false)
     return binding?.root
   }
@@ -90,8 +95,15 @@ class OwnersFragment : Fragment() {
       }
     }
 
-    viewModel.owners.observe(viewLifecycleOwner) {
-      ownersAdapter.addItems(it)
+    viewModel.ownerDataStatus.observe(viewLifecycleOwner) { status ->
+      binding?.progress?.isVisible = false
+      when (status) {
+        OwnerDataStatus.Added -> createSnackbar(R.string.owner_added)
+        OwnerDataStatus.Deleted -> createSnackbar(R.string.owner_deleted)
+        OwnerDataStatus.PetAdopted -> createSnackbar(R.string.pet_adopted)
+        OwnerDataStatus.Loading -> binding?.progress?.isVisible = true
+        is OwnerDataStatus.Result -> ownersAdapter.addItems(status.ownerList)
+      }
     }
 
     sharedViewModel.reload.observe(viewLifecycleOwner) { reload ->
@@ -105,5 +117,11 @@ class OwnersFragment : Fragment() {
     super.onResume()
 
     viewModel.getOwners()
+  }
+
+  private fun createSnackbar(@StringRes message: Int) {
+    binding?.apply {
+      Snackbar.make(root, message, Snackbar.LENGTH_SHORT).show()
+    }
   }
 }

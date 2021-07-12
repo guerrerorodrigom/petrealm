@@ -38,26 +38,26 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.raywenderlich.android.petrealm.pets.models.Pet
+import com.raywenderlich.android.petrealm.pets.repositories.PetDataStatus
 import com.raywenderlich.android.petrealm.pets.repositories.PetsRepository
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AdoptedPetsViewModel @Inject constructor(
-  private val petsRepository: PetsRepository
-): ViewModel() {
+    private val petsRepository: PetsRepository
+) : ViewModel() {
 
-  private val _adoptedPets = MutableLiveData<List<Pet>>(emptyList())
-  val adoptedPets: LiveData<List<Pet>>
+  private val _petDataStatus = MutableLiveData<PetDataStatus>()
+  val petDataStatus: LiveData<PetDataStatus>
     get() {
-      return _adoptedPets
+      return _petDataStatus
     }
 
   fun getPetsToAdopt() {
     viewModelScope.launch {
       petsRepository.getAdoptedPets().collect {
-        _adoptedPets.value = it
+        _petDataStatus.value = it
       }
     }
   }

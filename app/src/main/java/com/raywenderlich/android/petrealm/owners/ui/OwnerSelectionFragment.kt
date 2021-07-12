@@ -34,19 +34,24 @@
 
 package com.raywenderlich.android.petrealm.owners.ui
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
 import com.raywenderlich.android.petrealm.databinding.FragmentOwnerSelectionBinding
 import com.raywenderlich.android.petrealm.owners.adapters.OwnerAdapter
+import com.raywenderlich.android.petrealm.owners.repository.OwnerDataStatus
 import com.raywenderlich.android.petrealm.owners.viewmodels.OwnersViewModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -76,6 +81,13 @@ class OwnerSelectionFragment : BottomSheetDialogFragment() {
     return binding?.root
   }
 
+  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+
+    val dialog = BottomSheetDialog(requireContext(), theme)
+    dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+    return dialog
+  }
+
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
@@ -87,14 +99,13 @@ class OwnerSelectionFragment : BottomSheetDialogFragment() {
       ownersList.adapter = ownersAdapter
     }
 
-    viewModel.owners.observe(viewLifecycleOwner) {
-      ownersAdapter.addItems(it)
-    }
-
-    viewModel.petAdopted.observe(viewLifecycleOwner) { adopted ->
-      if (adopted) {
-        sharedViewModel.reload()
-        dismiss()
+    viewModel.ownerDataStatus.observe(viewLifecycleOwner) { status ->
+      when (status) {
+        OwnerDataStatus.PetAdopted -> {
+          sharedViewModel.reload()
+          dismiss()
+        }
+        is OwnerDataStatus.Result -> ownersAdapter.addItems(status.ownerList)
       }
     }
   }

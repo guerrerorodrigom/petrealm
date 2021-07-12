@@ -52,17 +52,18 @@ class OwnersRepositoryImpl @Inject constructor(
     private val config: RealmConfiguration
 ) : OwnersRepository {
 
-  override fun addOwner(name: String, image: Int?): Flow<Boolean> = flow {
-    emit(false)
+  override fun addOwner(name: String, image: Int?): Flow<OwnerDataStatus> = flow {
+    emit(OwnerDataStatus.Loading)
     val realm = Realm.getInstance(config)
     realm.executeTransactionAwait {
       val owner = OwnerRealm(name = name, image = image)
       it.insert(owner)
     }
-    emit(true)
+    emit(OwnerDataStatus.Added)
   }.flowOn(Dispatchers.IO)
 
-  override fun getOwners(): Flow<List<Owner>> = flow {
+  override fun getOwners(): Flow<OwnerDataStatus> = flow {
+    emit(OwnerDataStatus.Loading)
     val realm = Realm.getInstance(config)
     val owners = realm
         .where(OwnerRealm::class.java)
@@ -85,10 +86,11 @@ class OwnersRepositoryImpl @Inject constructor(
           Owner(name = owner.name, image = owner.image, id = owner.id, pets = pets,
               numberOfPets = petCount)
         }
-    emit(owners)
+    emit(OwnerDataStatus.Result(owners))
   }.flowOn(Dispatchers.IO)
 
-  override fun adoptPet(petId: String, ownerId: String): Flow<Boolean> = flow {
+  override fun adoptPet(petId: String, ownerId: String): Flow<OwnerDataStatus> = flow {
+    emit(OwnerDataStatus.Loading)
     val realm = Realm.getInstance(config)
 
     realm.executeTransactionAwait { realmTransaction ->
@@ -105,10 +107,11 @@ class OwnersRepositoryImpl @Inject constructor(
       owner?.pets?.add(pet)
     }
 
-    emit(true)
+    emit(OwnerDataStatus.PetAdopted)
   }.flowOn(Dispatchers.IO)
 
-  override fun deleteOwner(ownerId: String): Flow<Boolean> = flow {
+  override fun deleteOwner(ownerId: String): Flow<OwnerDataStatus> = flow {
+    emit(OwnerDataStatus.Loading)
     val realm = Realm.getInstance(config)
 
     realm.executeTransactionAwait { realmTransaction ->
@@ -121,6 +124,6 @@ class OwnersRepositoryImpl @Inject constructor(
       ownerToRemove?.deleteFromRealm()
     }
 
-    emit(true)
+    emit(OwnerDataStatus.Deleted)
   }.flowOn(Dispatchers.IO)
 }

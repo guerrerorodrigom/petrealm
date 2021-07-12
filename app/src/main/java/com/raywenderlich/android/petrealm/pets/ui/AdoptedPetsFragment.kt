@@ -38,14 +38,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.raywenderlich.android.petrealm.R
 import com.raywenderlich.android.petrealm.databinding.FragmentAdoptedPetsBinding
+import com.raywenderlich.android.petrealm.owners.repository.OwnerDataStatus
 import com.raywenderlich.android.petrealm.pets.adapters.PetAdapter
+import com.raywenderlich.android.petrealm.pets.repositories.PetDataStatus
 import com.raywenderlich.android.petrealm.pets.viewmodels.AdoptedPetsViewModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -81,8 +86,14 @@ class AdoptedPetsFragment : Fragment() {
       adoptedPetsList.adapter = petsAdapter
     }
 
-    viewModel.adoptedPets.observe(viewLifecycleOwner) {
-      petsAdapter.addItems(it)
+    viewModel.petDataStatus.observe(viewLifecycleOwner) { status ->
+      binding?.progress?.isVisible = false
+      when (status) {
+        PetDataStatus.Added -> createSnackbar(R.string.pet_added)
+        PetDataStatus.Deleted -> createSnackbar(R.string.pet_deleted)
+        PetDataStatus.Loading -> binding?.progress?.isVisible = true
+        is PetDataStatus.Result -> petsAdapter.addItems(status.petList)
+      }
     }
   }
 
@@ -90,5 +101,11 @@ class AdoptedPetsFragment : Fragment() {
     super.onResume()
 
     viewModel.getPetsToAdopt()
+  }
+
+  private fun createSnackbar(@StringRes message: Int) {
+    binding?.apply {
+      Snackbar.make(root, message, Snackbar.LENGTH_SHORT).show()
+    }
   }
 }

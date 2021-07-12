@@ -38,19 +38,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.raywenderlich.android.petrealm.owners.repository.OwnerDataStatus
 import com.raywenderlich.android.petrealm.owners.repository.OwnersRepository
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AddOwnerViewModel @Inject constructor(
-  private val ownersRepository: OwnersRepository
+    private val ownersRepository: OwnersRepository
 ) : ViewModel() {
 
-  private val _addOwnerCompleted = MutableLiveData(false)
-  val addOwnerCompleted: LiveData<Boolean>
+  private val _ownerDataStatus = MutableLiveData<OwnerDataStatus>()
+  val ownerDataStatus: LiveData<OwnerDataStatus>
     get() {
-      return _addOwnerCompleted
+      return _ownerDataStatus
     }
 
   private var selectedImage: Int? = null
@@ -60,7 +61,7 @@ class AddOwnerViewModel @Inject constructor(
   fun addOwner(name: String) {
     viewModelScope.launch {
       ownersRepository.addOwner(name, selectedImage).collect {
-        _addOwnerCompleted.value = it
+        _ownerDataStatus.value = it
       }
     }
   }

@@ -34,8 +34,6 @@
 
 package com.raywenderlich.android.petrealm.pets.repositories
 
-import com.raywenderlich.android.petrealm.realm.PetRealm
-import com.raywenderlich.android.petrealm.pets.models.Pet
 import kotlinx.coroutines.flow.Flow
 
 interface PetsRepository {
@@ -45,8 +43,6 @@ interface PetsRepository {
   fun getPetsToAdopt(): Flow<PetDataStatus>
 
   fun getAdoptedPets(): Flow<PetDataStatus>
-
-  fun updatePet(petRealm: PetRealm)
 
   fun deletePet(petId: String): Flow<PetDataStatus>
 }

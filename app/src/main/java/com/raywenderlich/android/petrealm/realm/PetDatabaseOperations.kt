@@ -32,45 +32,80 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.pets.repositories
+package com.raywenderlich.android.petrealm.realm
 
-import com.raywenderlich.android.petrealm.realm.PetDatabaseOperations
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import com.raywenderlich.android.petrealm.pets.models.Pet
+import io.realm.Realm
+import io.realm.RealmConfiguration
+import io.realm.Sort
+import io.realm.kotlin.executeTransactionAwait
 import javax.inject.Inject
 
-class PetsRepositoryImpl @Inject constructor(
-    private val databaseOperations: PetDatabaseOperations
-) : PetsRepository {
+class PetDatabaseOperations @Inject constructor(
+    private val config: RealmConfiguration
+) {
 
-  override fun addPet(
+  suspend fun insertPet(
       name: String,
       age: Int,
       type: String,
       image: Int?
-  ): Flow<PetDataStatus> = flow {
-    emit(PetDataStatus.Loading)
-    databaseOperations.insertPet(name, age, type, image)
-    emit(PetDataStatus.Added)
-  }.flowOn(Dispatchers.IO)
+  ) {
+    val realm = Realm.getInstance(config)
+    realm.executeTransactionAwait {
+      val pet = PetRealm(name = name, age = age, petType = type, image = image)
+      it.insert(pet)
+    }
+  }
 
-  override fun getPetsToAdopt(): Flow<PetDataStatus> = flow {
-    emit(PetDataStatus.Loading)
-    val petsToAdopt = databaseOperations.retrievePetsToAdopt()
-    emit(PetDataStatus.Result(petsToAdopt))
-  }.flowOn(Dispatchers.IO)
+  fun retrievePetsToAdopt(): List<Pet> {
+    val realm = Realm.getInstance(config)
+    return realm
+        .where(PetRealm::class.java)
+        .isEmpty("owner")
+        .findAll()
+        .map {
+          Pet(
+              name = it.name,
+              age = it.age,
+              image = it.image,
+              petType = it.petType,
+              isAdopted = false,
+              id = it.id
+          )
+        }
+  }
 
-  override fun getAdoptedPets(): Flow<PetDataStatus> = flow {
-    emit(PetDataStatus.Loading)
-    val petsToAdopt = databaseOperations.retrieveAdoptedPets()
-    emit(PetDataStatus.Result(petsToAdopt))
-  }.flowOn(Dispatchers.IO)
+  fun retrieveAdoptedPets(): List<Pet> {
+    val realm = Realm.getInstance(config)
+    return realm
+        .where(PetRealm::class.java)
+        .isNotEmpty("owner")
+        .findAll()
+        .sort("name", Sort.ASCENDING)
+        .map {
+          val name = it.owner?.get(0)?.name
+          Pet(
+              name = it.name,
+              age = it.age,
+              image = it.image,
+              petType = it.petType,
+              id = it.id,
+              isAdopted = true,
+              ownerName = name
+          )
+        }
+  }
 
-  override fun deletePet(petId: String): Flow<PetDataStatus> = flow {
-    emit(PetDataStatus.Loading)
-    databaseOperations.removePet(petId)
-    emit(PetDataStatus.Deleted)
-  }.flowOn(Dispatchers.IO)
+  suspend fun removePet(petId: String) {
+    val realm = Realm.getInstance(config)
+    realm.executeTransactionAwait { realmTransaction ->
+      val petToRemove = realmTransaction
+          .where(PetRealm::class.java)
+          .equalTo("id", petId)
+          .findFirst()
+
+      petToRemove?.deleteFromRealm()
+    }
+  }
 }

@@ -34,14 +34,7 @@
 
 package com.raywenderlich.android.petrealm.owners.repository
 
-import com.raywenderlich.android.petrealm.owners.models.Owner
-import com.raywenderlich.android.petrealm.pets.models.Pet
-import com.raywenderlich.android.petrealm.realm.OwnerRealm
-import com.raywenderlich.android.petrealm.realm.PetRealm
-import io.realm.Realm
-import io.realm.RealmConfiguration
-import io.realm.Sort
-import io.realm.kotlin.executeTransactionAwait
+import com.raywenderlich.android.petrealm.realm.OwnerDatabaseOperations
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -49,81 +42,30 @@ import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class OwnersRepositoryImpl @Inject constructor(
-    private val config: RealmConfiguration
+    private val databaseOperations: OwnerDatabaseOperations
 ) : OwnersRepository {
 
   override fun addOwner(name: String, image: Int?): Flow<OwnerDataStatus> = flow {
     emit(OwnerDataStatus.Loading)
-    val realm = Realm.getInstance(config)
-    realm.executeTransactionAwait {
-      val owner = OwnerRealm(name = name, image = image)
-      it.insert(owner)
-    }
+    databaseOperations.insertOwner(name, image)
     emit(OwnerDataStatus.Added)
   }.flowOn(Dispatchers.IO)
 
   override fun getOwners(): Flow<OwnerDataStatus> = flow {
     emit(OwnerDataStatus.Loading)
-    val realm = Realm.getInstance(config)
-    val owners = realm
-        .where(OwnerRealm::class.java)
-        .findAll()
-        .sort("name", Sort.ASCENDING)
-        .map { owner ->
-          val pets = owner.pets.map { pet ->
-            Pet(
-                id = pet.id,
-                name = pet.name,
-                age = pet.age,
-                petType = pet.petType,
-                image = pet.image,
-                isAdopted = true
-            )
-          }
-          val petCount = realm.where(PetRealm::class.java)
-              .equalTo("owner.id", owner.id)
-              .count()
-          Owner(name = owner.name, image = owner.image, id = owner.id, pets = pets,
-              numberOfPets = petCount)
-        }
+    val owners = databaseOperations.retrieveOwners()
     emit(OwnerDataStatus.Result(owners))
   }.flowOn(Dispatchers.IO)
 
   override fun adoptPet(petId: String, ownerId: String): Flow<OwnerDataStatus> = flow {
     emit(OwnerDataStatus.Loading)
-    val realm = Realm.getInstance(config)
-
-    realm.executeTransactionAwait { realmTransaction ->
-      val pet = realmTransaction
-          .where(PetRealm::class.java)
-          .equalTo("id", petId)
-          .findFirst()
-
-      val owner = realmTransaction
-          .where(OwnerRealm::class.java)
-          .equalTo("id", ownerId)
-          .findFirst()
-
-      owner?.pets?.add(pet)
-    }
-
+    databaseOperations.updatePets(petId, ownerId)
     emit(OwnerDataStatus.PetAdopted)
   }.flowOn(Dispatchers.IO)
 
   override fun deleteOwner(ownerId: String): Flow<OwnerDataStatus> = flow {
     emit(OwnerDataStatus.Loading)
-    val realm = Realm.getInstance(config)
-
-    realm.executeTransactionAwait { realmTransaction ->
-      val ownerToRemove = realmTransaction
-          .where(OwnerRealm::class.java)
-          .equalTo("id", ownerId)
-          .findFirst()
-
-      ownerToRemove?.pets?.deleteAllFromRealm()
-      ownerToRemove?.deleteFromRealm()
-    }
-
+    databaseOperations.removeOwner(ownerId)
     emit(OwnerDataStatus.Deleted)
   }.flowOn(Dispatchers.IO)
 }

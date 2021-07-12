@@ -38,6 +38,8 @@ import com.raywenderlich.android.petrealm.owners.repository.OwnersRepository
 import com.raywenderlich.android.petrealm.owners.repository.OwnersRepositoryImpl
 import com.raywenderlich.android.petrealm.pets.repositories.PetsRepository
 import com.raywenderlich.android.petrealm.pets.repositories.PetsRepositoryImpl
+import com.raywenderlich.android.petrealm.realm.OwnerDatabaseOperations
+import com.raywenderlich.android.petrealm.realm.PetDatabaseOperations
 import com.raywenderlich.android.petrealm.realm.migration
 import dagger.Module
 import dagger.Provides
@@ -59,11 +61,11 @@ class PetsModule {
 
   @Singleton
   @Provides
-  fun providesPetsRepository(configuration: RealmConfiguration): PetsRepository =
-      PetsRepositoryImpl(configuration)
+  fun providesPetsRepository(databaseOperations: PetDatabaseOperations): PetsRepository =
+      PetsRepositoryImpl(databaseOperations)
 
   @Singleton
   @Provides
-  fun providesOwnersRepository(configuration: RealmConfiguration): OwnersRepository =
-      OwnersRepositoryImpl(configuration)
+  fun providesOwnersRepository(databaseOperations: OwnerDatabaseOperations): OwnersRepository =
+      OwnersRepositoryImpl(databaseOperations)
 }

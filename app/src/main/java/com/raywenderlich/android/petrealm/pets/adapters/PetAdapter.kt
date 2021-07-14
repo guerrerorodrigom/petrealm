@@ -87,6 +87,7 @@ class PetAdapter @Inject constructor() : RecyclerView.Adapter<PetAdapter.PetView
         textViewPetType.text = pet.petType
         textViewPetOwner.isVisible = pet.isAdopted
         buttonAdopt.isVisible = pet.isAdopted.not()
+        buttonRemove.isVisible = pet.isAdopted.not()
         pet.ownerName?.let { owner ->
           textViewPetOwner.text = root.context.getString(R.string.owned_by, owner)
         }

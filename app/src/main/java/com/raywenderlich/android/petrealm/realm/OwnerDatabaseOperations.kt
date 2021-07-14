@@ -35,126 +35,35 @@
 package com.raywenderlich.android.petrealm.realm
 
 import com.raywenderlich.android.petrealm.owners.models.Owner
-import com.raywenderlich.android.petrealm.pets.models.Pet
-import io.realm.Realm
-import io.realm.RealmConfiguration
-import io.realm.Sort
-import io.realm.kotlin.executeTransactionAwait
-import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
-class OwnerDatabaseOperations @Inject constructor(
-    private val config: RealmConfiguration
-) {
+class OwnerDatabaseOperations @Inject constructor() {
 
   suspend fun insertOwner(name: String, image: Int?) {
-    val realm = Realm.getInstance(config)
-    realm.executeTransactionAwait(Dispatchers.IO) {
-      val owner = OwnerRealm(name = name, image = image)
-      it.insert(owner)
-    }
+
   }
 
   suspend fun updateOwner(ownerId: String, name: String, image: Int?) {
-    val realm = Realm.getInstance(config)
 
-    realm.executeTransactionAwait(Dispatchers.IO) { realmTransaction ->
-      val ownerRealm = realmTransaction
-          .where(OwnerRealm::class.java)
-          .equalTo("id", ownerId)
-          .findFirst()
-
-      ownerRealm?.name = name
-      ownerRealm?.image = image
-    }
   }
 
   suspend fun retrieveOwners(): List<Owner> {
-    val realm = Realm.getInstance(config)
     val owners = mutableListOf<Owner>()
 
-    realm.executeTransactionAwait(Dispatchers.IO) { realmTransaction ->
-      owners.addAll(realmTransaction
-          .where(OwnerRealm::class.java)
-          .findAll()
-          .sort("name", Sort.ASCENDING)
-          .map { owner ->
-            mapOwners(owner, realmTransaction)
-          }
-      )
-    }
     return owners
   }
 
   suspend fun retrieveOwner(ownerId: String): Owner? {
-    val realm = Realm.getInstance(config)
     var owner : Owner? = null
 
-    realm.executeTransactionAwait(Dispatchers.IO) { realmTransaction ->
-      val ownerRealm = realmTransaction
-          .where(OwnerRealm::class.java)
-          .equalTo("id", ownerId)
-          .findFirst()
-
-      owner = ownerRealm?.let { owner ->
-        Owner(name = owner.name, image = owner.image, id = owner.id)
-      }
-    }
     return owner
   }
 
   suspend fun updatePets(petId: String, ownerId: String) {
-    val realm = Realm.getInstance(config)
 
-    realm.executeTransactionAwait(Dispatchers.IO) { realmTransaction ->
-      val pet = realmTransaction
-          .where(PetRealm::class.java)
-          .equalTo("id", petId)
-          .findFirst()
-
-      val owner = realmTransaction
-          .where(OwnerRealm::class.java)
-          .equalTo("id", ownerId)
-          .findFirst()
-
-      pet?.isAdopted = true
-      owner?.pets?.add(pet)
-    }
   }
 
   suspend fun removeOwner(ownerId: String) {
-    val realm = Realm.getInstance(config)
 
-    realm.executeTransactionAwait(Dispatchers.IO) { realmTransaction ->
-      val ownerToRemove = realmTransaction
-          .where(OwnerRealm::class.java)
-          .equalTo("id", ownerId)
-          .findFirst()
-
-      ownerToRemove?.pets?.deleteAllFromRealm()
-      ownerToRemove?.deleteFromRealm()
-    }
-  }
-
-  private fun getPetCount(realm: Realm, owner: OwnerRealm): Long {
-    return realm.where(PetRealm::class.java)
-        .equalTo("owner.id", owner.id)
-        .count()
-  }
-
-  private fun mapOwners(owner: OwnerRealm, realm: Realm): Owner {
-    val pets = owner.pets.map { pet ->
-      Pet(
-          id = pet.id,
-          name = pet.name,
-          age = pet.age,
-          petType = pet.petType,
-          image = pet.image,
-          isAdopted = pet.isAdopted
-      )
-    }
-    val petCount = getPetCount(realm, owner)
-    return Owner(name = owner.name, image = owner.image, id = owner.id, pets = pets,
-        numberOfPets = petCount)
   }
 }

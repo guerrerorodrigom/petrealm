@@ -35,16 +35,9 @@
 package com.raywenderlich.android.petrealm.realm
 
 import com.raywenderlich.android.petrealm.pets.models.Pet
-import io.realm.Realm
-import io.realm.RealmConfiguration
-import io.realm.Sort
-import io.realm.kotlin.executeTransactionAwait
-import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
-class PetDatabaseOperations @Inject constructor(
-    private val config: RealmConfiguration
-) {
+class PetDatabaseOperations @Inject constructor() {
 
   suspend fun insertPet(
       name: String,
@@ -52,99 +45,28 @@ class PetDatabaseOperations @Inject constructor(
       type: String,
       image: Int?
   ) {
-    val realm = Realm.getInstance(config)
 
-    realm.executeTransactionAwait(Dispatchers.IO) { realmTransaction ->
-      val pet = PetRealm(name = name, age = age, petType = type, image = image)
-      realmTransaction.insert(pet)
-    }
   }
 
   suspend fun retrievePetsToAdopt(): List<Pet> {
-    val realm = Realm.getInstance(config)
     val petsToAdopt = mutableListOf<Pet>()
 
-    realm.executeTransactionAwait(Dispatchers.IO) { realmTransaction ->
-      petsToAdopt.addAll(realmTransaction
-          .where(PetRealm::class.java)
-          .equalTo("isAdopted", false)
-          .findAll()
-          .map {
-            mapPet(it)
-          }
-      )
-    }
     return petsToAdopt
   }
 
   suspend fun retrieveAdoptedPets(): List<Pet> {
-    val realm = Realm.getInstance(config)
     val adoptedPets = mutableListOf<Pet>()
 
-    realm.executeTransactionAwait(Dispatchers.IO) { realmTransaction ->
-      adoptedPets.addAll(realmTransaction
-          .where(PetRealm::class.java)
-          .equalTo("isAdopted", true)
-          .findAll()
-          .sort("name", Sort.ASCENDING)
-          .map {
-            mapPetsWithOwner(it)
-          }
-      )
-    }
     return adoptedPets
   }
 
   suspend fun removePet(petId: String) {
-    val realm = Realm.getInstance(config)
-    realm.executeTransactionAwait(Dispatchers.IO) { realmTransaction ->
-      val petToRemove = realmTransaction
-          .where(PetRealm::class.java)
-          .equalTo("id", petId)
-          .findFirst()
 
-      petToRemove?.deleteFromRealm()
-    }
   }
 
   suspend fun retrieveFilteredPets(petType: String): List<Pet> {
-    val realm = Realm.getInstance(config)
     val filteredPets = mutableListOf<Pet>()
 
-    realm.executeTransactionAwait(Dispatchers.IO) { realmTransaction ->
-      filteredPets.addAll(realmTransaction
-          .where(PetRealm::class.java)
-          .equalTo("isAdopted", false)
-          .and()
-          .beginsWith("petType", petType)
-          .findAll()
-          .map {
-            mapPet(it)
-          }
-      )
-    }
     return filteredPets
   }
-
-  private fun mapPetsWithOwner(pet: PetRealm): Pet {
-    val name = pet.owner?.get(0)?.name
-    return Pet(
-        name = pet.name,
-        age = pet.age,
-        image = pet.image,
-        petType = pet.petType,
-        id = pet.id,
-        isAdopted = true,
-        ownerName = name
-    )
-  }
-
-  private fun mapPet(pet: PetRealm) = Pet(
-      name = pet.name,
-      age = pet.age,
-      image = pet.image,
-      petType = pet.petType,
-      isAdopted = false,
-      id = pet.id
-  )
 }

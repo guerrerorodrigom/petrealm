@@ -40,24 +40,12 @@ import com.raywenderlich.android.petrealm.pets.repositories.PetsRepository
 import com.raywenderlich.android.petrealm.pets.repositories.PetsRepositoryImpl
 import com.raywenderlich.android.petrealm.realm.OwnerDatabaseOperations
 import com.raywenderlich.android.petrealm.realm.PetDatabaseOperations
-import com.raywenderlich.android.petrealm.realm.migration
 import dagger.Module
 import dagger.Provides
-import io.realm.RealmConfiguration
 import javax.inject.Singleton
 
 @Module
 class PetsModule {
-
-  private val realmVersion: Long = 2
-
-  @Singleton
-  @Provides
-  fun providesRealmConfig(): RealmConfiguration =
-      RealmConfiguration.Builder()
-          .schemaVersion(realmVersion)
-          .migration(migration)
-          .build()
 
   @Singleton
   @Provides

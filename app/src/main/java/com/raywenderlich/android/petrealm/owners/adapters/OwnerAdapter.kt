@@ -89,6 +89,7 @@ class OwnerAdapter @Inject constructor() : RecyclerView.Adapter<OwnerAdapter.Own
         textViewOwnerName.text = owner.name
         textViewNumberOfPets.text = binding.root.context.getString(R.string.number_pets,
             owner.numberOfPets)
+        textViewPets.text = owner.pets.joinToString(", ") { it.name }
         buttonRemove.isVisible = showRemoveButtons
         buttonRemove.setOnClickListener {
           owners.removeAt(adapterPosition)

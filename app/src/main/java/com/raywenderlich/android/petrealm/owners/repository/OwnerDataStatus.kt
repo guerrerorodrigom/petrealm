@@ -39,7 +39,10 @@ import com.raywenderlich.android.petrealm.owners.models.Owner
 sealed class OwnerDataStatus {
   object Loading : OwnerDataStatus()
   object Added : OwnerDataStatus()
+  object Updated : OwnerDataStatus()
   object Deleted : OwnerDataStatus()
   object PetAdopted : OwnerDataStatus()
-  data class Result(val ownerList: List<Owner>) : OwnerDataStatus()
+  object OwnerNotFound : OwnerDataStatus()
+  data class AllOwnersRetrieved(val ownerList: List<Owner>) : OwnerDataStatus()
+  data class OwnerRetrieved(val owner: Owner) : OwnerDataStatus()
 }

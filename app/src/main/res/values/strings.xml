@@ -86,4 +86,5 @@
   <string name="pet_adopted">Pet adopted.</string>
   <string name="pet_added">Pet added.</string>
   <string name="pet_deleted">Pet removed.</string>
+  <string name="update_owner">Update owner</string>
 </resources>

@@ -51,10 +51,24 @@ class OwnersRepositoryImpl @Inject constructor(
     emit(OwnerDataStatus.Added)
   }.flowOn(Dispatchers.IO)
 
+  override fun updateOwner(ownerId: String, name: String, image: Int?): Flow<OwnerDataStatus> = flow {
+    emit(OwnerDataStatus.Loading)
+    databaseOperations.updateOwner(ownerId, name, image)
+    emit(OwnerDataStatus.Updated)
+  }.flowOn(Dispatchers.IO)
+
   override fun getOwners(): Flow<OwnerDataStatus> = flow {
     emit(OwnerDataStatus.Loading)
     val owners = databaseOperations.retrieveOwners()
-    emit(OwnerDataStatus.Result(owners))
+    emit(OwnerDataStatus.AllOwnersRetrieved(owners))
+  }.flowOn(Dispatchers.IO)
+
+  override fun getOwner(ownerId: String): Flow<OwnerDataStatus> = flow {
+    emit(OwnerDataStatus.Loading)
+    val owner = databaseOperations.retrieveOwner(ownerId)
+    owner?.let {
+      emit(OwnerDataStatus.OwnerRetrieved(it))
+    } ?: emit(OwnerDataStatus.OwnerNotFound)
   }.flowOn(Dispatchers.IO)
 
   override fun adoptPet(petId: String, ownerId: String): Flow<OwnerDataStatus> = flow {

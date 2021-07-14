@@ -41,6 +41,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.raywenderlich.android.petrealm.R
@@ -48,6 +49,7 @@ import com.raywenderlich.android.petrealm.common.adapters.ImageAdapter
 import com.raywenderlich.android.petrealm.common.utils.addTracker
 import com.raywenderlich.android.petrealm.common.viewmodels.SharedViewModel
 import com.raywenderlich.android.petrealm.databinding.FragmentAddOwnerBinding
+import com.raywenderlich.android.petrealm.owners.models.Owner
 import com.raywenderlich.android.petrealm.owners.repository.OwnerDataStatus
 import com.raywenderlich.android.petrealm.owners.utils.getOwnersImages
 import com.raywenderlich.android.petrealm.owners.viewmodels.AddOwnerViewModel
@@ -62,6 +64,7 @@ class AddOwnerFragment : BottomSheetDialogFragment() {
   @Inject
   lateinit var viewModelFactory: ViewModelProvider.Factory
 
+  private val args: AddOwnerFragmentArgs by navArgs()
   private val viewModel: AddOwnerViewModel by viewModels { viewModelFactory }
   private val sharedViewModel: SharedViewModel by activityViewModels { viewModelFactory }
   private var binding: FragmentAddOwnerBinding? = null
@@ -83,13 +86,29 @@ class AddOwnerFragment : BottomSheetDialogFragment() {
     setupSelectionTracker()
     setupButton()
 
+    args.ownerId?.let { ownerId ->
+      viewModel.getOwnerInfo(ownerId)
+    }
+
     viewModel.ownerDataStatus.observe(viewLifecycleOwner) { status ->
       when (status) {
+        OwnerDataStatus.Updated,
         OwnerDataStatus.Added -> {
           sharedViewModel.reload()
           dismiss()
         }
+        is OwnerDataStatus.OwnerRetrieved -> addOwnerData(status.owner)
       }
+    }
+  }
+
+  private fun addOwnerData(owner: Owner) {
+    binding?.apply {
+      editTextName.setText(owner.name)
+      owner.image?.let {
+        imagesAdapter.selectImage(it)
+      }
+      buttonCreate.text = getString(R.string.update_owner)
     }
   }
 
@@ -116,10 +135,16 @@ class AddOwnerFragment : BottomSheetDialogFragment() {
       buttonCreate.setOnClickListener {
         textInputLayoutName.error = ""
 
-        if (viewModel.isValid(editTextName.text.toString())) {
-          viewModel.addOwner(editTextName.text.toString())
-        } else {
-          textInputLayoutName.error = getString(R.string.name_error)
+        when {
+          args.ownerId != null -> {
+            viewModel.updateOwner(args.ownerId!!, editTextName.text.toString())
+          }
+          viewModel.isValid(editTextName.text.toString()) -> {
+            viewModel.addOwner(editTextName.text.toString())
+          }
+          else -> {
+            textInputLayoutName.error = getString(R.string.name_error)
+          }
         }
       }
     }

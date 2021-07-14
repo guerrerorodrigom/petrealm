@@ -78,5 +78,5 @@ class PetsRepositoryImpl @Inject constructor(
     emit(PetDataStatus.Loading)
     val filteredPets = databaseOperations.retrieveFilteredPets(petType)
     emit(PetDataStatus.Result(filteredPets))
-  }
+  }.flowOn(Dispatchers.IO)
 }

@@ -88,6 +88,10 @@ class OwnersFragment : Fragment() {
       ownersAdapter.addRemoveAction { ownerId ->
         viewModel.removeOwner(ownerId)
       }
+      ownersAdapter.addOnClickAction { ownerId ->
+        val action = OwnersFragmentDirections.actionUpdateOwner(ownerId)
+        findNavController().navigate(action)
+      }
       ownersList.adapter = ownersAdapter
 
       buttonAddOwner.setOnClickListener {
@@ -102,7 +106,7 @@ class OwnersFragment : Fragment() {
         OwnerDataStatus.Deleted -> createSnackbar(R.string.owner_deleted)
         OwnerDataStatus.PetAdopted -> createSnackbar(R.string.pet_adopted)
         OwnerDataStatus.Loading -> binding?.progress?.isVisible = true
-        is OwnerDataStatus.Result -> ownersAdapter.addItems(status.ownerList)
+        is OwnerDataStatus.AllOwnersRetrieved -> ownersAdapter.addItems(status.ownerList)
       }
     }
 

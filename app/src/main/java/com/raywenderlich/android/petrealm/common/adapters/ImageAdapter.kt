@@ -41,7 +41,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
-import com.raywenderlich.android.petrealm.R
 import com.raywenderlich.android.petrealm.databinding.ItemImageBinding
 import javax.inject.Inject
 
@@ -79,6 +78,14 @@ class ImageAdapter @Inject constructor() :
 
   fun getSelectedImage(position: Long): Int {
     return images[position.toInt()]
+  }
+
+  fun selectImage(image: Int) {
+    val position = this.images.indexOf(image)
+
+    if (position >= 0) {
+      val selected = this.tracker?.select(position.toLong())
+    }
   }
 
   class ImageViewHolder(private val binding: ItemImageBinding) :

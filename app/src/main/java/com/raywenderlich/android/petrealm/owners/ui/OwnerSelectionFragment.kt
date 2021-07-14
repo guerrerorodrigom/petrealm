@@ -39,7 +39,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -105,7 +104,7 @@ class OwnerSelectionFragment : BottomSheetDialogFragment() {
           sharedViewModel.reload()
           dismiss()
         }
-        is OwnerDataStatus.Result -> ownersAdapter.addItems(status.ownerList)
+        is OwnerDataStatus.AllOwnersRetrieved -> ownersAdapter.addItems(status.ownerList)
       }
     }
   }

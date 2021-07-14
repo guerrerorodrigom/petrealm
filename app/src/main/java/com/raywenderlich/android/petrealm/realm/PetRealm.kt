@@ -52,6 +52,7 @@ open class PetRealm(
   var petType: String = "",
   @DrawableRes
   var image: Int? = null,
+  var isAdopted: Boolean = false,
   @LinkingObjects("pets")
   val owner: RealmResults<OwnerRealm>? = null
 ): RealmObject()

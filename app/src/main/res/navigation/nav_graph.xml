@@ -80,13 +80,7 @@
   <dialog
     android:id="@+id/add_owner"
     android:name="com.raywenderlich.android.petrealm.owners.ui.AddOwnerFragment"
-    tools:layout="@layout/fragment_add_owner">
-    <argument
-        android:name="ownerId"
-        app:argType="string"
-        app:nullable="true"
-        android:defaultValue="@null"/>
-  </dialog>
+    tools:layout="@layout/fragment_add_owner" />
 
   <dialog
       android:id="@+id/select_owner"

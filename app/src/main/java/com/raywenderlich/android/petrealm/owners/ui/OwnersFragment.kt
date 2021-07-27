@@ -88,10 +88,6 @@ class OwnersFragment : Fragment() {
       ownersAdapter.addRemoveAction { ownerId ->
         viewModel.removeOwner(ownerId)
       }
-      ownersAdapter.addOnClickAction { ownerId ->
-        val action = OwnersFragmentDirections.actionUpdateOwner(ownerId)
-        findNavController().navigate(action)
-      }
       ownersList.adapter = ownersAdapter
 
       buttonAddOwner.setOnClickListener {

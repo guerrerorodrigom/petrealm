@@ -42,11 +42,7 @@ interface OwnersRepository {
 
   fun getOwners(): Flow<OwnerDataStatus>
 
-  fun getOwner(ownerId: String): Flow<OwnerDataStatus>
-
   fun adoptPet(petId: String, ownerId: String): Flow<OwnerDataStatus>
 
   fun deleteOwner(ownerId: String): Flow<OwnerDataStatus>
-
-  fun updateOwner(ownerId: String, name: String, image: Int?): Flow<OwnerDataStatus>
 }

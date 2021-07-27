@@ -78,7 +78,6 @@
     <item quantity="other">years</item>
   </plurals>
   <string name="pet_age">%d %s</string>
-  <string name="number_pets">%d pets</string>
   <string name="adopt_me">Adopt Me</string>
   <string name="remove">Remove</string>
   <string name="owner_added">Owner was added</string>

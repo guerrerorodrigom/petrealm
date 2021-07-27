@@ -69,20 +69,4 @@ class AddOwnerViewModel @Inject constructor(
   fun setSelectedImage(selectedImage: Int) {
     this.selectedImage = selectedImage
   }
-
-  fun getOwnerInfo(ownerId: String) {
-    viewModelScope.launch {
-      ownersRepository.getOwner(ownerId).collect {
-        _ownerDataStatus.value = it
-      }
-    }
-  }
-
-  fun updateOwner(ownerId: String, name: String) {
-    viewModelScope.launch {
-      ownersRepository.updateOwner(ownerId, name, selectedImage).collect {
-        _ownerDataStatus.value = it
-      }
-    }
-  }
 }

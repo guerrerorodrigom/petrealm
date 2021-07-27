@@ -67,17 +67,6 @@
         tools:text="Owner Name" />
 
     <TextView
-        android:id="@+id/text_view_number_of_pets"
-        style="@style/TextAppearance.MaterialComponents.Caption"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/item_margin_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/image_owner"
-        app:layout_constraintTop_toBottomOf="@id/text_view_owner_name"
-        tools:text="Owner of 3 pets" />
-
-    <TextView
         android:id="@+id/text_view_pets"
         style="@style/TextAppearance.MaterialComponents.Caption"
         android:layout_width="0dp"
@@ -85,7 +74,7 @@
         android:layout_marginStart="@dimen/item_margin_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/image_owner"
-        app:layout_constraintTop_toBottomOf="@id/text_view_number_of_pets"
+        app:layout_constraintTop_toBottomOf="@id/text_view_owner_name"
         tools:text="Pet name 1, pet name 2, pet name 3" />
 
     <com.google.android.material.button.MaterialButton

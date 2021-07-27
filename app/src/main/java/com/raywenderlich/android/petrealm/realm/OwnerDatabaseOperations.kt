@@ -43,20 +43,10 @@ class OwnerDatabaseOperations @Inject constructor() {
 
   }
 
-  suspend fun updateOwner(ownerId: String, name: String, image: Int?) {
-
-  }
-
   suspend fun retrieveOwners(): List<Owner> {
     val owners = mutableListOf<Owner>()
 
     return owners
-  }
-
-  suspend fun retrieveOwner(ownerId: String): Owner? {
-    var owner : Owner? = null
-
-    return owner
   }
 
   suspend fun updatePets(petId: String, ownerId: String) {

@@ -42,6 +42,7 @@ import com.raywenderlich.android.petrealm.di.PetsModule
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
+import io.realm.Realm
 import javax.inject.Inject
 
 class PetApplication : MultiDexApplication(), HasAndroidInjector {
@@ -57,6 +58,7 @@ class PetApplication : MultiDexApplication(), HasAndroidInjector {
         .build().run {
           inject(this@PetApplication)
         }
+    Realm.init(this)
   }
 
   override fun attachBaseContext(base: Context) {

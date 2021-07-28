@@ -32,40 +32,21 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.di
+package com.raywenderlich.android.petrealm.realm
 
-import com.raywenderlich.android.petrealm.owners.repository.OwnersRepository
-import com.raywenderlich.android.petrealm.owners.repository.OwnersRepositoryImpl
-import com.raywenderlich.android.petrealm.pets.repositories.PetsRepository
-import com.raywenderlich.android.petrealm.pets.repositories.PetsRepositoryImpl
-import com.raywenderlich.android.petrealm.realm.OwnerDatabaseOperations
-import com.raywenderlich.android.petrealm.realm.PetDatabaseOperations
-import com.raywenderlich.android.petrealm.realm.migration
-import dagger.Module
-import dagger.Provides
-import io.realm.RealmConfiguration
-import javax.inject.Singleton
+import androidx.annotation.DrawableRes
+import io.realm.RealmList
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
+import io.realm.annotations.Required
+import org.bson.types.ObjectId
 
-@Module
-class PetsModule {
-
-  private val realmVersion = 2L
-
-  @Singleton
-  @Provides
-  fun providesRealmConfig(): RealmConfiguration =
-      RealmConfiguration.Builder()
-          .schemaVersion(realmVersion)
-          .migration(migration)
-          .build()
-
-  @Singleton
-  @Provides
-  fun providesPetsRepository(databaseOperations: PetDatabaseOperations): PetsRepository =
-      PetsRepositoryImpl(databaseOperations)
-
-  @Singleton
-  @Provides
-  fun providesOwnersRepository(databaseOperations: OwnerDatabaseOperations): OwnersRepository =
-      OwnersRepositoryImpl(databaseOperations)
-}
+open class OwnerRealm(
+  @PrimaryKey
+  var id: String = ObjectId().toHexString(),
+  @Required
+  var name: String = "",
+  @DrawableRes
+  var image: Int? = null,
+  var pets: RealmList<PetRealm> = RealmList()
+) : RealmObject()

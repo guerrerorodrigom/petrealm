@@ -32,40 +32,17 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.petrealm.di
+package com.raywenderlich.android.petrealm.realm
 
-import com.raywenderlich.android.petrealm.owners.repository.OwnersRepository
-import com.raywenderlich.android.petrealm.owners.repository.OwnersRepositoryImpl
-import com.raywenderlich.android.petrealm.pets.repositories.PetsRepository
-import com.raywenderlich.android.petrealm.pets.repositories.PetsRepositoryImpl
-import com.raywenderlich.android.petrealm.realm.OwnerDatabaseOperations
-import com.raywenderlich.android.petrealm.realm.PetDatabaseOperations
-import com.raywenderlich.android.petrealm.realm.migration
-import dagger.Module
-import dagger.Provides
-import io.realm.RealmConfiguration
-import javax.inject.Singleton
+import io.realm.RealmMigration
 
-@Module
-class PetsModule {
+val migration = RealmMigration { realm, oldVersion, newVersion ->
+  if (oldVersion == 1L) {
+    val ownerSchema = realm.schema.get("OwnerRealm")
+    val petSchema = realm.schema.get("PetRealm")
 
-  private val realmVersion = 2L
-
-  @Singleton
-  @Provides
-  fun providesRealmConfig(): RealmConfiguration =
-      RealmConfiguration.Builder()
-          .schemaVersion(realmVersion)
-          .migration(migration)
-          .build()
-
-  @Singleton
-  @Provides
-  fun providesPetsRepository(databaseOperations: PetDatabaseOperations): PetsRepository =
-      PetsRepositoryImpl(databaseOperations)
-
-  @Singleton
-  @Provides
-  fun providesOwnersRepository(databaseOperations: OwnerDatabaseOperations): OwnersRepository =
-      OwnersRepositoryImpl(databaseOperations)
+    petSchema?.let {
+      ownerSchema?.addRealmListField("pets", it)
+    }
+  }
 }

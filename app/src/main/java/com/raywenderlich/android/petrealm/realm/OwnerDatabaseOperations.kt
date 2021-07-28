@@ -35,25 +35,81 @@
 package com.raywenderlich.android.petrealm.realm
 
 import com.raywenderlich.android.petrealm.owners.models.Owner
+import io.realm.Realm
+import io.realm.RealmConfiguration
+import io.realm.Sort
+import io.realm.kotlin.executeTransactionAwait
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
-class OwnerDatabaseOperations @Inject constructor() {
+class OwnerDatabaseOperations @Inject constructor(private val config: RealmConfiguration) {
 
   suspend fun insertOwner(name: String, image: Int?) {
-
+    val realm = Realm.getInstance(config)
+    realm.executeTransactionAwait(Dispatchers.IO) { realmTransaction ->
+      val owner = OwnerRealm(name = name, image = image)
+      realmTransaction.insert(owner)
+    }
   }
 
   suspend fun retrieveOwners(): List<Owner> {
+    val realm = Realm.getInstance(config)
     val owners = mutableListOf<Owner>()
 
+    realm.executeTransactionAwait(Dispatchers.IO) { realmTransaction ->
+      owners.addAll(realmTransaction
+          .where(OwnerRealm::class.java)
+          .findAll()
+          .sort("name", Sort.ASCENDING)
+          .map { owner ->
+            Owner(
+                name = owner.name,
+                image = owner.image,
+                id = owner.id,
+                numberOfPets = getPetCount(realmTransaction, owner.id)
+            )
+          }
+      )
+    }
     return owners
   }
 
   suspend fun updatePets(petId: String, ownerId: String) {
+    val realm = Realm.getInstance(config)
 
+    realm.executeTransactionAwait(Dispatchers.IO) { realmTransaction ->
+      val pet = realmTransaction
+          .where(PetRealm::class.java)
+          .equalTo("id", petId)
+          .findFirst()
+
+      val owner = realmTransaction
+          .where(OwnerRealm::class.java)
+          .equalTo("id", ownerId)
+          .findFirst()
+
+      pet?.isAdopted = true
+      owner?.pets?.add(pet)
+    }
   }
 
   suspend fun removeOwner(ownerId: String) {
+    val realm = Realm.getInstance(config)
 
+    realm.executeTransactionAwait(Dispatchers.IO) { realmTransaction ->
+      val ownerToRemove = realmTransaction
+          .where(OwnerRealm::class.java)
+          .equalTo("id", ownerId)
+          .findFirst()
+
+      ownerToRemove?.pets?.deleteAllFromRealm()
+      ownerToRemove?.deleteFromRealm()
+    }
+  }
+
+  private fun getPetCount(realm: Realm, ownerId: String): Long {
+    return realm.where(PetRealm::class.java)
+        .equalTo("owner.id", ownerId)
+        .count()
   }
 }

@@ -87,7 +87,8 @@ class OwnerAdapter @Inject constructor() : RecyclerView.Adapter<OwnerAdapter.Own
           Picasso.get().load(it).into(imageOwner)
         }
         textViewOwnerName.text = owner.name
-        textViewPets.text = owner.pets.joinToString(", ") { it.name }
+        textViewNumberOfPets.text = binding.root.context.getString(R.string.number_pets,
+            owner.numberOfPets)
         buttonRemove.isVisible = showRemoveButtons
         buttonRemove.setOnClickListener {
           owners.removeAt(adapterPosition)

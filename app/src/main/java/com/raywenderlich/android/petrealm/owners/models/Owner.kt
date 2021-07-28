@@ -42,5 +42,6 @@ data class Owner(
   val name: String,
   @DrawableRes
   val image: Int? = null,
+  val numberOfPets: Long = 0,
   val pets: List<Pet> = emptyList()
 )
